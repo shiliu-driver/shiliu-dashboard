@@ -1379,8 +1379,55 @@ function renderEnglish() {
   const todayStr = today();
   // 自动排班：新2旧3
   const schedule = autoScheduleBooks(books, 2, 3);
+
+  // ===== 每日亲子口语库 =====
+  const dailyPhrases = [
+    { scene:'🌅 早上起床', en:'Good morning, baby! Time to wake up!', zh:'早上好宝贝，该起床啦！', tip:'边说边拉开窗帘' },
+    { scene:'🪥 刷牙洗脸', en:'Let\'s brush your teeth. Open your mouth!', zh:'来刷牙吧，张开嘴巴！', tip:'做刷牙动作示范' },
+    { scene:'👕 穿衣服', en:'Put on your shirt. One arm, then the other!', zh:'穿上衣服，一只手，另一只手！', tip:'边穿边指身体部位' },
+    { scene:'🍳 吃早餐', en:'Yummy eggs! Take a bite. Is it good?', zh:'好吃的鸡蛋！咬一口，好吃吗？', tip:'竖起大拇指鼓励' },
+    { scene:'🚗 出门', en:'Let\'s go out! Put on your shoes. Bye-bye!', zh:'我们出门啦！穿上鞋子，拜拜！', tip:'挥挥手做再见动作' },
+    { scene:'🎮 玩玩具', en:'What\'s this? It\'s a car! Vroom vroom!', zh:'这是什么？是小汽车！呜～呜～', tip:'拿玩具互动' },
+    { scene:'📖 看书', en:'Let\'s read a book. Turn the page. What do you see?', zh:'我们看书吧，翻一页，看到什么了？', tip:'指着图画问' },
+    { scene:'🍎 吃水果', en:'Do you want an apple? Here you go. Say "thank you"!', zh:'想吃苹果吗？给你，说"谢谢"！', tip:'递水果时重复英文' },
+    { scene:'🛁 洗澡', en:'Splash splash! Wash your tummy. So clean!', zh:'哗啦哗啦！洗洗小肚肚，好干净！', tip:'边洗边唱' },
+    { scene:'😴 睡觉', en:'It\'s bedtime. Close your eyes. Good night, sweetie!', zh:'该睡觉啦，闭上眼睛，晚安宝贝！', tip:'轻轻拍拍背' },
+    { scene:'🐶 看动物', en:'Look, a dog! The dog says "woof woof"!', zh:'看，小狗！小狗汪汪叫！', tip:'模仿动物叫声' },
+    { scene:'🤗 表扬', en:'Good job! Give me a high-five! You did it!', zh:'真棒！击个掌！你做到了！', tip:'伸出手击掌' },
+    { scene:'😢 摔倒', en:'Are you okay? It\'s okay. Give me a hug.', zh:'你还好吗？没关系，抱抱。', tip:'蹲下抱抱安抚' },
+    { scene:'🧹 收拾', en:'Let\'s clean up. Put the toys in the box. Good helper!', zh:'我们来收拾吧，把玩具放进箱子里，好帮手！', tip:'一起做动作' },
+  ];
+
+  // 根据日期轮换，每天显示3组
+  const dayIndex = Math.floor(new Date(todayStr).getTime() / 86400000) % dailyPhrases.length;
+  const todayPhrases = [];
+  for (let i = 0; i < 3; i++) {
+    todayPhrases.push(dailyPhrases[(dayIndex + i) % dailyPhrases.length]);
+  }
+
   return `
     <div class="module-panel">
+      <!-- 每日亲子口语 -->
+      <div class="card" style="background:linear-gradient(135deg,#E8F4FD 0%,#F0F8FF 100%);border:1px solid #B8D8F0;">
+        <div class="card-header">
+          <span class="icon">💬</span>
+          <h3>每日亲子口语</h3>
+          <span class="badge">每天3句，自然输入</span>
+        </div>
+        <p style="font-size:12px; color:var(--text-light); margin-bottom:12px;">🗣️ 2岁宝宝英语启蒙关键是<strong>在真实场景中说</strong>，不用刻意教，日常对话中自然输入最有效。每天选3个场景试试吧！</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          ${todayPhrases.map(p => `
+            <div style="background:#fff;border-radius:12px;padding:12px 16px;border:1px solid #D8ECFA;">
+              <div style="font-size:14px;font-weight:700;color:#2C6A9E;margin-bottom:4px;">${p.scene}</div>
+              <div style="font-size:16px;font-weight:600;color:#3A4A5C;margin-bottom:4px;">🗣️ ${p.en}</div>
+              <div style="font-size:13px;color:var(--text-light);margin-bottom:2px;">${p.zh}</div>
+              <div style="font-size:11px;color:#5BA4D6;">💡 ${p.tip}</div>
+            </div>
+          `).join('')}
+        </div>
+        <p style="font-size:11px;color:var(--text-light);margin-top:10px;text-align:right;">📅 每日自动轮换 · 共${dailyPhrases.length}组场景</p>
+      </div>
+
       <!-- 计划表 -->
       <div class="card">
         <div class="card-header">
@@ -1403,9 +1450,9 @@ function renderEnglish() {
               <td><strong>「新2旧3」</strong>方案：每日2本新书 + 3本复习旧书；书单读完一轮自动循环重复巩固</td>
             </tr>
             <tr>
-              <td><span class="phase-tag p3">口语目标</span></td>
-              <td>持续积累</td>
-              <td>积累日常短句，鼓励指认、跟读，不强求自主输出</td>
+              <td><span class="phase-tag p3">亲子口语</span></td>
+              <td>每日</td>
+              <td><strong>每天3个生活场景</strong>，在日常互动中自然说英文，不强求宝宝跟读，营造双语氛围</td>
             </tr>
             <tr>
               <td><span class="phase-tag p1">磨耳朵</span></td>
