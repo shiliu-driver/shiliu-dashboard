@@ -1,0 +1,2384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>石榴小司机成长探索工作台</title>
+<style>
+:root {
+  --sky: #E8F4FD;
+  --cream: #FFFAF5;
+  --haze: #A8C8E0;
+  --yellow: #FFD54F;
+  --sky-deep: #B8D8F0;
+  --text: #3A4A5C;
+  --text-light: #6B8299;
+  --border: #E0E8EF;
+  --card-bg: #FFFFFF;
+  --card-shadow: 0 2px 12px rgba(160,180,200,0.15);
+  --radius: 18px;
+  --menu-width: 220px;
+  --menu-bg: #F5F9FD;
+  --menu-active: #D8ECFA;
+  --menu-hover: #EEF5FB;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+/* === 暗纹背景层 === */
+.bg-pattern {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  overflow: hidden;
+}
+.bg-pattern svg { width: 100%; height: 100%; }
+
+/* === 左侧菜单栏 === */
+.sidebar {
+  width: var(--menu-width);
+  min-width: var(--menu-width);
+  background: var(--menu-bg);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  position: relative;
+}
+.sidebar-header {
+  padding: 20px 16px 14px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-header .logo-icon { font-size: 32px; margin-bottom: 4px; }
+.sidebar-header h2 {
+  font-size: 15px;
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.sidebar-header .subtitle {
+  font-size: 10px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+.sidebar-nav::-webkit-scrollbar { width: 3px; }
+.sidebar-nav::-webkit-scrollbar-thumb { background: #d0d8e0; border-radius: 3px; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 13px;
+  color: var(--text);
+  border-left: 3px solid transparent;
+  margin: 1px 0;
+  user-select: none;
+}
+.nav-item:hover { background: var(--menu-hover); }
+.nav-item.active {
+  background: var(--menu-active);
+  border-left-color: #5BA4D6;
+  font-weight: 600;
+  color: #2C6A9E;
+}
+.nav-item .nav-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+.nav-item .nav-label { line-height: 1.3; }
+
+.sidebar-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  color: var(--text-light);
+  text-align: center;
+}
+
+/* === 主内容区 === */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px;
+  z-index: 5;
+  position: relative;
+  height: 100vh;
+}
+.main-content::-webkit-scrollbar { width: 6px; }
+.main-content::-webkit-scrollbar-thumb { background: #c8d6e0; border-radius: 6px; }
+
+/* === 通用卡片 === */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f4f8;
+}
+.card-header .icon { font-size: 26px; }
+.card-header h3 { font-size: 17px; font-weight: 700; color: var(--text); }
+.card-header .badge {
+  font-size: 11px;
+  background: var(--sky);
+  color: #3A7AB5;
+  padding: 3px 10px;
+  border-radius: 12px;
+  margin-left: auto;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 16px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.section-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 16px;
+  background: var(--yellow);
+  border-radius: 2px;
+}
+
+/* === 计划表 === */
+.plan-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin: 8px 0 14px;
+}
+.plan-table th {
+  background: #F0F6FB;
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 600;
+  color: #3A7AB5;
+  border-bottom: 2px solid #D8ECFA;
+}
+.plan-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid #f0f4f8;
+  color: var(--text);
+}
+.plan-table tr:hover td { background: #FAFCFE; }
+.plan-table .phase-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 600;
+}
+.phase-tag.p1 { background: #E8F4FD; color: #3A7AB5; }
+.phase-tag.p2 { background: #FFF8E1; color: #B8860B; }
+.phase-tag.p3 { background: #E8F5E9; color: #388E3C; }
+
+/* === 表单组件 === */
+.form-group { margin-bottom: 12px; }
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.form-label .dot {
+  width: 6px; height: 6px;
+  background: var(--yellow);
+  border-radius: 50%;
+}
+
+input[type="date"], input[type="text"], input[type="number"], select {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  width: 100%;
+  max-width: 300px;
+  background: #FAFCFE;
+  color: var(--text);
+  transition: border 0.2s;
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: #5BA4D6;
+  box-shadow: 0 0 0 3px rgba(91,164,214,0.1);
+}
+textarea {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  width: 100%;
+  max-width: 400px;
+  resize: vertical;
+  min-height: 50px;
+  background: #FAFCFE;
+  font-family: inherit;
+}
+textarea:focus { outline: none; border-color: #5BA4D6; }
+
+/* === 勾选任务网格 === */
+.task-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  margin: 6px 0 12px;
+}
+.task-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #FAFCFE;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 13px;
+  user-select: none;
+}
+.task-check:hover { border-color: #A8C8E0; background: #F5FAFE; }
+.task-check.checked {
+  background: #E8F6ED;
+  border-color: #81C784;
+  color: #2E7D32;
+}
+.task-check input[type="checkbox"] { display: none; }
+.task-check .check-box {
+  width: 20px; height: 20px;
+  border: 2px solid #c8d6e0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.task-check.checked .check-box {
+  background: #66BB6A;
+  border-color: #66BB6A;
+}
+.task-check.checked .check-box::after {
+  content: '✓';
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* === 星级评分 === */
+.star-rating {
+  display: flex;
+  gap: 6px;
+  cursor: pointer;
+}
+.star-rating .star {
+  font-size: 28px;
+  color: #d0d8e0;
+  transition: all 0.2s;
+  user-select: none;
+}
+.star-rating .star.active { color: var(--yellow); }
+.star-rating .star:hover { transform: scale(1.2); }
+
+/* === 单选组 === */
+.radio-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+  user-select: none;
+}
+.radio-option:hover { border-color: #A8C8E0; }
+.radio-option.selected {
+  background: #E8F4FD;
+  border-color: #5BA4D6;
+  color: #2C6A9E;
+  font-weight: 600;
+}
+.radio-option input { display: none; }
+
+/* === 按钮 === */
+.btn {
+  padding: 9px 20px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+.btn-primary {
+  background: #5BA4D6;
+  color: #fff;
+}
+.btn-primary:hover { background: #4A93C5; }
+.btn-outline {
+  background: #fff;
+  border: 1px solid #5BA4D6;
+  color: #5BA4D6;
+}
+.btn-outline:hover { background: #E8F4FD; }
+.btn-sm { padding: 5px 12px; font-size: 11px; }
+.btn-yellow { background: var(--yellow); color: #5D4037; }
+.btn-yellow:hover { background: #FFC107; }
+
+.btn-row { display: flex; gap: 8px; margin-top: 12px; }
+
+.btn-action {
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px dashed #5BA4D6;
+  background: #fff;
+  color: #5BA4D6;
+  transition: all 0.2s;
+}
+.btn-action:hover { background: #E8F4FD; border-style: solid; }
+.btn-edit, .btn-del {
+  background: none;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.btn-edit:hover { background: #E8F4FD; }
+.btn-del:hover { background: #FFE8E8; }
+.btn-save {
+  padding: 9px 24px;
+  border-radius: 10px;
+  background: #5BA4D6;
+  color: #fff;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-save:hover { background: #4A93C5; }
+.btn-cancel {
+  padding: 9px 24px;
+  border-radius: 10px;
+  background: #f0f0f0;
+  color: #666;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+.btn-cancel:hover { background: #e0e0e0; }
+
+/* === 弹窗 === */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-box {
+  background: #fff;
+  border-radius: 16px;
+  width: 420px;
+  max-width: 90vw;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  overflow: hidden;
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: #F8FBFD;
+}
+.modal-header h3 { font-size: 16px; margin: 0; }
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #999;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.modal-close:hover { background: #eee; color: #333; }
+.modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.modal-body label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 8px;
+}
+.modal-body label:first-child { margin-top: 0; }
+.modal-body input, .modal-body select {
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.modal-body input:focus, .modal-body select:focus { border-color: #5BA4D6; }
+.modal-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  text-align: right;
+  background: #FAFAFA;
+}
+
+.vax-row { cursor: pointer; transition: background 0.15s; }
+.vax-row:hover { background: #F0F7FC; }
+
+/* === 书单管理 === */
+.booklist-panel {
+  background: #F8FBFD;
+  border-radius: 12px;
+  padding: 14px;
+  margin: 10px 0;
+  border: 1px dashed #c8d6e0;
+}
+.booklist-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  margin: 3px 0;
+  background: #fff;
+  border-radius: 8px;
+  font-size: 12px;
+  border: 1px solid #f0f4f8;
+}
+.booklist-item .book-status {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-left: auto;
+}
+.book-status.new { background: #E8F4FD; color: #3A7AB5; }
+.book-status.old { background: #FFF8E1; color: #B8860B; }
+
+.add-book-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: center;
+}
+.add-book-row input {
+  flex: 1;
+  max-width: 250px;
+}
+
+/* === 公告区 === */
+.announce-card {
+  background: linear-gradient(135deg, #F8FBFD 0%, #EEF5FB 100%);
+  border: 1px solid #D8ECFA;
+}
+.announce-card h2 {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #2C6A9E;
+}
+.announce-card ol {
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text);
+}
+.announce-card ol li { margin-bottom: 4px; }
+
+/* === 使用规则高亮 === */
+.rule-highlight {
+  background: #FFF8E1;
+  border-left: 4px solid var(--yellow);
+  padding: 12px 16px;
+  border-radius: 0 10px 10px 0;
+  margin: 12px 0;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+/* === 隐藏/显示 === */
+.hidden { display: none !important; }
+
+/* === 打卡记录列表 === */
+.record-list {
+  margin-top: 10px;
+}
+.record-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0f4f8;
+  font-size: 12px;
+}
+.record-item .record-date { font-weight: 600; min-width: 90px; }
+.record-item .record-status {
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 10px;
+}
+.record-status.full { background: #E8F5E9; color: #388E3C; }
+.record-status.partial { background: #FFF8E1; color: #B8860B; }
+.record-status.none { background: #FFEBEE; color: #C62828; }
+
+/* === 响应式 === */
+@media (max-width: 900px) {
+  .sidebar { width: 70px; min-width: 70px; }
+  .sidebar-header h2, .sidebar-header .subtitle { display: none; }
+  .nav-item .nav-label { display: none; }
+  .nav-item { justify-content: center; padding: 12px; }
+  .main-content { padding: 16px; }
+}
+
+/* === 动画 === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.module-panel { animation: fadeIn 0.3s ease; }
+</style>
+</head>
+<body>
+
+<!-- 暗纹背景 -->
+<div class="bg-pattern">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900">
+    <!-- 小汽车 -->
+    <g transform="translate(80,120)" opacity="0.5">
+      <rect x="0" y="8" width="40" height="16" rx="8" fill="#5BA4D6"/>
+      <rect x="6" y="0" width="28" height="12" rx="4" fill="#7EC8E3"/>
+      <circle cx="10" cy="26" r="5" fill="#3A5A7C"/>
+      <circle cx="30" cy="26" r="5" fill="#3A5A7C"/>
+    </g>
+    <g transform="translate(320,80)" opacity="0.4">
+      <rect x="0" y="8" width="50" height="18" rx="9" fill="#FFD54F"/>
+      <rect x="8" y="0" width="34" height="14" rx="5" fill="#FFECB3"/>
+      <circle cx="12" cy="28" r="6" fill="#3A5A7C"/>
+      <circle cx="38" cy="28" r="6" fill="#3A5A7C"/>
+    </g>
+    <g transform="translate(600,200)" opacity="0.35">
+      <rect x="0" y="8" width="45" height="17" rx="8" fill="#A8C8E0"/>
+      <rect x="7" y="0" width="31" height="13" rx="5" fill="#D8ECFA"/>
+      <circle cx="11" cy="27" r="5.5" fill="#3A5A7C"/>
+      <circle cx="34" cy="27" r="5.5" fill="#3A5A7C"/>
+    </g>
+    <!-- 轨道火车 -->
+    <g transform="translate(750,150)" opacity="0.4">
+      <rect x="0" y="6" width="70" height="20" rx="4" fill="#7EC8E3"/>
+      <rect x="5" y="0" width="20" height="12" rx="3" fill="#5BA4D6"/>
+      <rect x="30" y="0" width="15" height="8" rx="2" fill="#FFD54F"/>
+      <rect x="50" y="0" width="15" height="8" rx="2" fill="#FFD54F"/>
+      <circle cx="12" cy="28" r="5" fill="#3A5A7C"/>
+      <circle cx="35" cy="28" r="5" fill="#3A5A7C"/>
+      <circle cx="58" cy="28" r="5" fill="#3A5A7C"/>
+    </g>
+    <g transform="translate(180,300)" opacity="0.3">
+      <rect x="0" y="6" width="60" height="18" rx="4" fill="#A8C8E0"/>
+      <rect x="4" y="0" width="18" height="11" rx="3" fill="#D8ECFA"/>
+      <circle cx="10" cy="26" r="4.5" fill="#3A5A7C"/>
+      <circle cx="30" cy="26" r="4.5" fill="#3A5A7C"/>
+      <circle cx="50" cy="26" r="4.5" fill="#3A5A7C"/>
+    </g>
+    <!-- 飞机 -->
+    <g transform="translate(400,350)" opacity="0.35">
+      <ellipse cx="35" cy="10" rx="40" ry="6" fill="#7EC8E3"/>
+      <polygon points="70,10 85,0 85,20" fill="#D8ECFA"/>
+      <polygon points="0,10 10,0 10,20" fill="#5BA4D6"/>
+      <rect x="25" y="0" width="20" height="6" rx="2" fill="#FFD54F"/>
+    </g>
+    <g transform="translate(850,380)" opacity="0.3">
+      <ellipse cx="30" cy="8" width="35" height="5" fill="#A8C8E0"/>
+      <polygon points="60,8 72,0 72,16" fill="#D8ECFA"/>
+      <rect x="20" y="0" width="18" height="5" rx="2" fill="#FFD54F"/>
+    </g>
+    <!-- 轮船 -->
+    <g transform="translate(100,500)" opacity="0.35">
+      <path d="M0,18 L8,0 L52,0 L60,18 Z" fill="#7EC8E3"/>
+      <rect x="25" y="-10" width="8" height="12" rx="1" fill="#5BA4D6"/>
+      <rect x="20" y="18" width="20" height="6" rx="3" fill="#3A5A7C"/>
+    </g>
+    <g transform="translate(500,550)" opacity="0.3">
+      <path d="M0,16 L6,0 L44,0 L50,16 Z" fill="#A8C8E0"/>
+      <rect x="20" y="-8" width="6" height="10" rx="1" fill="#D8ECFA"/>
+      <rect x="16" y="16" width="18" height="5" rx="2" fill="#3A5A7C"/>
+    </g>
+    <!-- 云朵 -->
+    <ellipse cx="200" cy="60" rx="45" ry="18" fill="#E8F4FD" opacity="0.6"/>
+    <ellipse cx="550" cy="40" rx="35" ry="14" fill="#E8F4FD" opacity="0.5"/>
+    <ellipse cx="900" cy="90" rx="50" ry="20" fill="#E8F4FD" opacity="0.55"/>
+    <ellipse cx="1050" cy="30" rx="30" ry="12" fill="#E8F4FD" opacity="0.45"/>
+    <ellipse cx="350" cy="450" rx="40" ry="16" fill="#E8F4FD" opacity="0.4"/>
+    <ellipse cx="700" cy="520" rx="35" ry="14" fill="#E8F4FD" opacity="0.35"/>
+    <!-- 虚线航线轨道 -->
+    <line x1="80" y1="160" x2="600" y2="160" stroke="#A8C8E0" stroke-width="1.5" stroke-dasharray="8,6" opacity="0.35"/>
+    <line x1="400" y1="400" x2="1000" y2="400" stroke="#A8C8E0" stroke-width="1.5" stroke-dasharray="8,6" opacity="0.3"/>
+    <path d="M150,550 Q300,500 500,550 T850,550" fill="none" stroke="#A8C8E0" stroke-width="1.2" stroke-dasharray="6,5" opacity="0.3"/>
+    <!-- 挖掘机 -->
+    <g transform="translate(900,550)" opacity="0.35">
+      <rect x="0" y="12" width="40" height="14" rx="5" fill="#FFD54F"/>
+      <circle cx="10" cy="28" r="5" fill="#3A5A7C"/>
+      <circle cx="30" cy="28" r="5" fill="#3A5A7C"/>
+      <rect x="35" y="6" width="16" height="8" rx="2" fill="#7EC8E3"/>
+      <line x1="45" y1="6" x2="55" y2="-4" stroke="#5BA4D6" stroke-width="3"/>
+      <rect x="52" y="-12" width="10" height="10" rx="2" fill="#3A5A7C"/>
+    </g>
+  </svg>
+</div>
+
+<!-- 左侧菜单栏 -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-icon">🚗</div>
+    <h2>石榴小司机</h2>
+    <div class="subtitle">成长探索工作台</div>
+  </div>
+  <nav class="sidebar-nav" id="sidebarNav">
+  </nav>
+  <div class="sidebar-footer">👶 2岁1个月 · 男宝<br>交通工具探险主题</div>
+</aside>
+
+<!-- 主内容区 -->
+<main class="main-content" id="mainContent">
+</main>
+
+<script>
+// ============ 菜单配置 ============
+const MENU = [
+  { id: 'home', label: '工作台首页', icon: '🚗', category: 'core' },
+  { id: 'feeding', label: '喂养日历', icon: '📅' },
+  { id: 'vaccine', label: '疫苗接种', icon: '🛡️' },
+  { id: 'growth', label: '生长发育', icon: '🚀' },
+  { id: 'milestone', label: '成长里程碑', icon: '🏁' },
+  { id: 'play', label: '早教陪玩', icon: '🧩' },
+  { id: 'english', label: '英语启蒙', icon: '✈️' },
+  { id: 'reading', label: '中文绘本阅读', icon: '🚋' },
+  { id: 'math', label: '数感启蒙', icon: '🚂' },
+  { id: 'general', label: '通识学习', icon: '🚢' },
+  { id: 'sports', label: '大运动体能启蒙', icon: '🚙' },
+  { id: 'fineMotor', label: '精细动作启蒙', icon: '🚜' },
+  { id: 'selfCare', label: '生活自理启蒙', icon: '🚚' },
+  { id: 'daily', label: '日常记录', icon: '📝' },
+  { id: 'travel', label: '旅行打卡', icon: '📍' },
+];
+
+// ============ 数据存储 ============
+const STORAGE_KEY = 'shiliu_dashboard';
+function loadData() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch { return {}; }
+}
+function saveData(key, value) {
+  const data = loadData();
+  data[key] = value;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+function getModuleData(moduleId, defaultVal = {}) {
+  const data = loadData();
+  return data[moduleId] || defaultVal;
+}
+
+// 书单数据
+function getBookList(type) { // 'english' or 'chinese'
+  const data = loadData();
+  return data[`books_${type}`] || [];
+}
+function saveBookList(type, books) {
+  saveData(`books_${type}`, books);
+}
+
+// 打卡记录
+function getCheckins(moduleId) {
+  const data = loadData();
+  return data[`checkins_${moduleId}`] || [];
+}
+function saveCheckins(moduleId, records) {
+  saveData(`checkins_${moduleId}`, records);
+}
+
+// ============ 渲染菜单 ============
+function renderSidebar() {
+  const nav = document.getElementById('sidebarNav');
+  nav.innerHTML = MENU.map(m => `
+    <div class="nav-item" data-id="${m.id}" onclick="switchModule('${m.id}')">
+      <span class="nav-icon">${m.icon}</span>
+      <span class="nav-label">${m.label}</span>
+    </div>
+  `).join('');
+}
+
+// ============ 模块切换 ============
+let currentModule = 'home';
+function switchModule(id) {
+  currentModule = id;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.id === id));
+  renderModule(id);
+  // 滚动到顶部
+  document.getElementById('mainContent').scrollTop = 0;
+}
+
+function renderModule(id) {
+  const main = document.getElementById('mainContent');
+  switch(id) {
+    case 'home': main.innerHTML = renderHome(); break;
+    case 'feeding': main.innerHTML = renderFeeding(); break;
+    case 'vaccine': main.innerHTML = renderVaccine(); break;
+    case 'growth': main.innerHTML = renderGrowth(); break;
+    case 'milestone': main.innerHTML = renderMilestone(); break;
+    case 'play': main.innerHTML = renderPlay(); break;
+    case 'english': main.innerHTML = renderEnglish(); break;
+    case 'reading': main.innerHTML = renderReading(); break;
+    case 'math': main.innerHTML = renderMath(); break;
+    case 'general': main.innerHTML = renderGeneral(); break;
+    case 'sports': main.innerHTML = renderSports(); break;
+    case 'fineMotor': main.innerHTML = renderFineMotor(); break;
+    case 'selfCare': main.innerHTML = renderSelfCare(); break;
+    case 'daily': main.innerHTML = renderDaily(); break;
+    case 'travel': main.innerHTML = renderTravel(); break;
+  }
+  // 绑定事件
+  setTimeout(bindModuleEvents, 50);
+}
+
+// ============ 首页 ============
+function renderHome() {
+  return `
+    <div class="module-panel">
+      <div class="card announce-card">
+        <h2>🚗 石榴小司机·每日勾选打卡规则</h2>
+        <ol>
+          <li>每个启蒙模块内置长期学习计划表，每日只需要<strong>勾选当日任务</strong>，无需大量文字填写</li>
+          <li>单项启蒙时长控制<strong>10-15分钟</strong>，游戏式引导，不强迫学习</li>
+          <li>当日所有启蒙任务全部勾选完成，奖励<strong>小汽车贴纸一枚</strong>激励 🏆</li>
+          <li>每周日对照计划表复盘完成率，微调下周学习侧重点</li>
+          <li>英文、中文绘本依托<strong>个人书单循环阅读</strong>，灵活增删书目</li>
+          <li>以过程打卡记录为主，<strong>不内卷、不攀比</strong>，遵从宝宝当日状态</li>
+        </ol>
+      </div>
+
+      <div class="card rule-highlight" style="border-left-color: #5BA4D6; background: #F0F7FC;">
+        <strong>📖 英文启蒙 & 中文绘本阅读模块使用规则：</strong><br>
+        1. 后续录入专属个人书单，工作台按照【英文：新2旧3；中文：每周3新+旧书循环】规则自动排班；<br>
+        2. 每日表单预留书目填写栏，记录当天实际阅读绘本；<br>
+        3. 书单一轮读完后自动循环复习，可随时新增、删减书单。
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="icon">📊</span>
+          <h3>今日打卡概览</h3>
+        </div>
+        <div id="homeSummary" style="font-size:13px; color: var(--text-light);">
+          加载中...
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ============ 喂养日历 ============
+function renderFeeding() {
+  return `
+    <div class="module-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="icon">📅</span>
+          <h3>喂养日历</h3>
+          <span class="badge">小车+日历路线</span>
+        </div>
+        <p style="font-size:13px; color:var(--text-light); margin-bottom:14px;">🚗 记录石榴每日饮食，保持营养均衡</p>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>打卡日期</label>
+          <input type="date" id="feedingDate" value="${today()}">
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>早餐</label>
+          <input type="text" id="feedingBreakfast" placeholder="早餐内容">
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>午餐</label>
+          <input type="text" id="feedingLunch" placeholder="午餐内容">
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>晚餐</label>
+          <input type="text" id="feedingDinner" placeholder="晚餐内容">
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>加餐/零食</label>
+          <input type="text" id="feedingSnack" placeholder="加餐内容">
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="saveFeeding()">💾 保存记录</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="icon">📋</span><h3>喂养记录</h3></div>
+        <div id="feedingRecords" class="record-list"></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============ 疫苗接种 ============
+const DEFAULT_VACCINES = [
+  {id:'v1',name:'乙肝疫苗',dose:'第1剂',date:'2024-06-26',status:'done',type:'免费',notes:'出生当天打'},
+  {id:'v2',name:'卡介苗',dose:'第1剂',date:'2024-06-26',status:'done',type:'免费',notes:''},
+  {id:'v3',name:'乙肝疫苗',dose:'第2剂',date:'2024-07-26',status:'done',type:'免费',notes:''},
+  {id:'v4',name:'脊灰灭活疫苗',dose:'第1剂',date:'2024-08-26',status:'done',type:'免费',notes:''},
+  {id:'v5',name:'脊灰减毒活疫苗',dose:'第2剂',date:'2024-09-26',status:'done',type:'免费',notes:''},
+  {id:'v6',name:'百白破疫苗',dose:'第1剂',date:'2024-09-26',status:'done',type:'免费',notes:''},
+  {id:'v7',name:'百白破疫苗',dose:'第2剂',date:'2024-10-26',status:'done',type:'免费',notes:''},
+  {id:'v8',name:'脊灰减毒活疫苗',dose:'第3剂',date:'2024-10-26',status:'done',type:'免费',notes:''},
+  {id:'v9',name:'百白破疫苗',dose:'第3剂',date:'2024-11-26',status:'done',type:'免费',notes:''},
+  {id:'v10',name:'乙脑疫苗',dose:'第1剂',date:'2024-11-26',status:'done',type:'免费',notes:''},
+  {id:'v11',name:'A群流脑多糖疫苗',dose:'第1剂',date:'2024-12-26',status:'done',type:'免费',notes:''},
+  {id:'v12',name:'A群流脑多糖疫苗',dose:'第2剂',date:'2025-01-26',status:'done',type:'免费',notes:''},
+  {id:'v13',name:'麻腮风疫苗',dose:'第1剂',date:'2025-03-26',status:'done',type:'免费',notes:''},
+  {id:'v14',name:'乙脑疫苗',dose:'第2剂',date:'2025-03-26',status:'done',type:'免费',notes:''},
+  {id:'v15',name:'麻腮风疫苗',dose:'第2剂',date:'2025-09-26',status:'done',type:'免费',notes:''},
+  {id:'v16',name:'百白破疫苗',dose:'第4剂',date:'2025-09-26',status:'done',type:'免费',notes:''},
+  {id:'v17',name:'甲肝减毒活疫苗',dose:'第1剂',date:'2025-09-26',status:'done',type:'免费',notes:''},
+  {id:'v18',name:'乙脑疫苗',dose:'第3剂',date:'2026-03-26',status:'pending',type:'免费',notes:''},
+  {id:'v19',name:'A+C群流脑多糖疫苗',dose:'第1剂',date:'2026-03-26',status:'pending',type:'免费',notes:''},
+  {id:'v20',name:'脊灰灭活疫苗(自费)',dose:'第1剂',date:'2025-09-26',status:'pending',type:'自费',notes:'自费替代'},
+  {id:'v21',name:'五联疫苗',dose:'第1剂',date:'2025-06-26',status:'done',type:'自费',notes:'自费'},
+  {id:'v22',name:'手足口疫苗(EV71)',dose:'第1剂',date:'2025-06-26',status:'done',type:'自费',notes:'两剂间隔1月'},
+  {id:'v23',name:'手足口疫苗(EV71)',dose:'第2剂',date:'2025-07-26',status:'done',type:'自费',notes:'自费'},
+  {id:'v24',name:'流感疫苗',dose:'四价',date:'2025-10-01',status:'done',type:'自费',notes:'四价流感首次'},
+];
+
+function getVaccines() {
+  const data = loadData();
+  return data.vaccines || [...DEFAULT_VACCINES.map(v => ({...v}))];
+}
+function saveVaccines(list) {
+  saveData('vaccines', list);
+}
+
+function renderVaccine() {
+  const vax = getVaccines();
+  return `
+    <div class="module-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="icon">🛡️</span>
+          <h3>疫苗接种记录</h3>
+          <span class="badge">点击行可编辑 | 底部可新增</span>
+        </div>
+        <p style="font-size:13px; color:var(--text-light); margin-bottom:14px;">💉 石榴疫苗接种全程记录，守护健康成长。点击任意行编辑，修改后自动保存。</p>
+        <table class="plan-table" id="vaxTable">
+          <thead><tr><th>疫苗名称</th><th>剂次</th><th>接种日期</th><th>类型</th><th>状态</th><th>备注</th><th>操作</th></tr></thead>
+          <tbody>
+            ${vax.map(v => `
+              <tr id="vax-row-${v.id}" class="vax-row" ondblclick="editVaccine('${v.id}')">
+                <td>${v.name}</td>
+                <td>${v.dose}</td>
+                <td>${v.date}</td>
+                <td>${v.type}</td>
+                <td>${v.status === 'done' ? '✅ 已完成' : '⏳ 待接种'}</td>
+                <td>${v.notes || '-'}</td>
+                <td>
+                  <button class="btn-edit" onclick="event.stopPropagation(); editVaccine('${v.id}')" title="编辑">✏️</button>
+                  <button class="btn-del" onclick="event.stopPropagation(); deleteVaccine('${v.id}')" title="删除">🗑️</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <div style="margin-top:12px; text-align:right;">
+          <button class="btn-action" onclick="addVaccine()">➕ 新增疫苗记录</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function editVaccine(id) {
+  const vax = getVaccines();
+  const v = vax.find(x => x.id === id);
+  if (!v) return;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>✏️ 编辑疫苗记录</h3>
+        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+      </div>
+      <div class="modal-body">
+        <label>疫苗名称</label>
+        <input type="text" id="editName" value="${escHtml(v.name)}" placeholder="如：乙肝疫苗">
+        <label>剂次</label>
+        <input type="text" id="editDose" value="${escHtml(v.dose)}" placeholder="如：第1剂">
+        <label>接种日期</label>
+        <input type="date" id="editDate" value="${v.date}">
+        <label>类型</label>
+        <select id="editType">
+          <option value="免费" ${v.type==='免费'?'selected':''}>免费</option>
+          <option value="自费" ${v.type==='自费'?'selected':''}>自费</option>
+        </select>
+        <label>状态</label>
+        <select id="editStatus">
+          <option value="done" ${v.status==='done'?'selected':''}>✅ 已完成</option>
+          <option value="pending" ${v.status==='pending'?'selected':''}>⏳ 待接种</option>
+        </select>
+        <label>备注</label>
+        <input type="text" id="editNotes" value="${escHtml(v.notes||'')}" placeholder="如：出生当天打">
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="this.closest('.modal-overlay').remove()">取消</button>
+        <button class="btn-save" onclick="saveVaccineEdit('${id}')">💾 保存</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+}
+
+function saveVaccineEdit(id) {
+  const name = document.getElementById('editName').value.trim();
+  const dose = document.getElementById('editDose').value.trim();
+  const date = document.getElementById('editDate').value;
+  const type = document.getElementById('editType').value;
+  const status = document.getElementById('editStatus').value;
+  const notes = document.getElementById('editNotes').value.trim();
+
+  if (!name) { alert('请输入疫苗名称'); return; }
+
+  const vax = getVaccines();
+  const idx = vax.findIndex(x => x.id === id);
+  if (idx === -1) return;
+  vax[idx] = { ...vax[idx], name, dose, date, type, status, notes };
+  saveVaccines(vax);
+
+  document.querySelector('.modal-overlay')?.remove();
+  switchModule('vaccine');
+}
+
+function addVaccine() {
+  const newId = 'v' + Date.now();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>➕ 新增疫苗记录</h3>
+        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+      </div>
+      <div class="modal-body">
+        <label>疫苗名称 <span style="color:#e88;">*</span></label>
+        <input type="text" id="editName" placeholder="如：乙肝疫苗">
+        <label>剂次</label>
+        <input type="text" id="editDose" placeholder="如：第1剂">
+        <label>接种日期</label>
+        <input type="date" id="editDate" value="${new Date().toISOString().slice(0,10)}">
+        <label>类型</label>
+        <select id="editType"><option value="免费">免费</option><option value="自费">自费</option></select>
+        <label>状态</label>
+        <select id="editStatus"><option value="done">✅ 已完成</option><option value="pending" selected>⏳ 待接种</option></select>
+        <label>备注</label>
+        <input type="text" id="editNotes" placeholder="可选备注">
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="this.closest('.modal-overlay').remove()">取消</button>
+        <button class="btn-save" onclick="saveNewVaccine('${newId}')">💾 保存</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+}
+
+function saveNewVaccine(id) {
+  const name = document.getElementById('editName').value.trim();
+  const dose = document.getElementById('editDose').value.trim();
+  const date = document.getElementById('editDate').value;
+  const type = document.getElementById('editType').value;
+  const status = document.getElementById('editStatus').value;
+  const notes = document.getElementById('editNotes').value.trim();
+
+  if (!name) { alert('请输入疫苗名称'); return; }
+
+  const vax = getVaccines();
+  vax.push({ id, name, dose: dose || '-', date: date || '', type, status, notes });
+  saveVaccines(vax);
+
+  document.querySelector('.modal-overlay')?.remove();
+  switchModule('vaccine');
+}
+
+function deleteVaccine(id) {
+  if (!confirm('确定删除这条疫苗记录吗？此操作不可撤销。')) return;
+  let vax = getVaccines();
+  vax = vax.filter(x => x.id !== id);
+  saveVaccines(vax);
+  switchModule('vaccine');
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// 通用弹窗：fields = [{label, id, type, value, placeholder?, step?, options?}], onSave 返回 true 则关闭
+function showModal(title, fields, onSave) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  const fieldHtml = fields.map(f => {
+    let input;
+    if (f.type === 'select' && f.options) {
+      input = `<select id="${f.id}">${f.options.map(o => `<option value="${escHtml(o)}" ${o===f.value?'selected':''}>${escHtml(o)}</option>`).join('')}</select>`;
+    } else if (f.type === 'date') {
+      input = `<input type="date" id="${f.id}" value="${f.value||''}">`;
+    } else if (f.type === 'number') {
+      input = `<input type="number" id="${f.id}" value="${f.value||''}" step="${f.step||'1'}" placeholder="${escHtml(f.placeholder||'')}">`;
+    } else {
+      input = `<input type="text" id="${f.id}" value="${escHtml(f.value||'')}" placeholder="${escHtml(f.placeholder||'')}">`;
+    }
+    return `<label>${f.label}${f.required?' <span style="color:#e88;">*</span>':''}</label>${input}`;
+  }).join('');
+
+  overlay.innerHTML = `
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>${title}</h3>
+        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+      </div>
+      <div class="modal-body">${fieldHtml}</div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="this.closest('.modal-overlay').remove()">取消</button>
+        <button class="btn-save" id="modalSaveBtn">💾 保存</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+  document.getElementById('modalSaveBtn').addEventListener('click', function() {
+    if (onSave() !== false) overlay.remove();
+  });
+  // 回车保存
+  overlay.addEventListener('keydown', function(e) { if (e.key === 'Enter') { document.getElementById('modalSaveBtn').click(); } });
+}
+
+// ============ 生长发育 ============
+const DEFAULT_GROWTH = [
+  {id:'g1',date:'2024-06-26',height:50,weight:3.3},
+  {id:'g2',date:'2024-09-26',height:62,weight:6.8},
+  {id:'g3',date:'2024-12-26',height:70,weight:8.5},
+  {id:'g4',date:'2025-03-26',height:75,weight:9.6},
+  {id:'g5',date:'2025-06-26',height:79,weight:10.5},
+  {id:'g6',date:'2025-09-26',height:83,weight:11.2},
+  {id:'g7',date:'2025-12-26',height:86,weight:11.8},
+  {id:'g8',date:'2026-03-26',height:89,weight:12.3},
+  {id:'g9',date:'2026-06-26',height:91,weight:12.8},
+];
+
+function getGrowthRecords() {
+  const data = loadData();
+  return data.growth || [...DEFAULT_GROWTH.map(v => ({...v}))];
+}
+function saveGrowthRecords(list) { saveData('growth', list); }
+
+function renderGrowth() {
+  const records = getGrowthRecords();
+  // 按日期排序
+  records.sort((a,b) => a.date.localeCompare(b.date));
+  // 计算月龄（基于出生日期 2024-06-26）
+  function calcMonth(d) { const b = new Date('2024-06-26'); const m = new Date(d); return Math.floor((m-b)/(1000*60*60*24*30.44)); }
+
+  return `
+    <div class="module-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="icon">🚀</span>
+          <h3>生长发育记录</h3>
+          <span class="badge">点击行可编辑 | 底部可新增</span>
+        </div>
+        <p style="font-size:13px; color:var(--text-light); margin-bottom:14px;">📏 石榴身高体重追踪，像小火箭一样向上成长。双击或点 ✏️ 编辑，修改后自动保存。</p>
+        <table class="plan-table">
+          <thead><tr><th>测量日期</th><th>身高 (cm)</th><th>体重 (kg)</th><th>月龄</th><th>操作</th></tr></thead>
+          <tbody>
+            ${records.map(r => `
+              <tr class="vax-row" ondblclick="editGrowth('${r.id}')">
+                <td>${r.date}</td><td>${r.height}</td><td>${r.weight}</td><td>约${calcMonth(r.date)}个月</td>
+                <td>
+                  <button class="btn-edit" onclick="event.stopPropagation(); editGrowth('${r.id}')" title="编辑">✏️</button>
+                  <button class="btn-del" onclick="event.stopPropagation(); deleteGrowth('${r.id}')" title="删除">🗑️</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <div style="margin-top:12px; text-align:right;">
+          <button class="btn-action" onclick="addGrowthRecord()">➕ 新增测量记录</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function editGrowth(id) {
+  const records = getGrowthRecords();
+  const r = records.find(x => x.id === id);
+  if (!r) return;
+  showModal('✏️ 编辑生长发育记录', [
+    {label:'测量日期', id:'editDate', type:'date', value:r.date},
+    {label:'身高 (cm)', id:'editHeight', type:'number', value:r.height, step:'0.1'},
+    {label:'体重 (kg)', id:'editWeight', type:'number', value:r.weight, step:'0.1'},
+  ], () => {
+    const date = document.getElementById('editDate').value;
+    const height = parseFloat(document.getElementById('editHeight').value);
+    const weight = parseFloat(document.getElementById('editWeight').value);
+    if (!date || isNaN(height) || isNaN(weight)) { alert('请填写完整信息'); return false; }
+    const list = getGrowthRecords();
+    const idx = list.findIndex(x => x.id === id);
+    if (idx === -1) return false;
+    list[idx] = { ...list[idx], date, height, weight };
+    saveGrowthRecords(list);
+    switchModule('growth');
+    return true;
+  });
+}
+
+function addGrowthRecord() {
+  showModal('➕ 新增测量记录', [
+    {label:'测量日期', id:'editDate', type:'date', value:today()},
+    {label:'身高 (cm)', id:'editHeight', type:'number', value:'', step:'0.1', placeholder:'如 91'},
+    {label:'体重 (kg)', id:'editWeight', type:'number', value:'', step:'0.1', placeholder:'如 12.8'},
+  ], () => {
+    const date = document.getElementById('editDate').value;
+    const height = parseFloat(document.getElementById('editHeight').value);
+    const weight = parseFloat(document.getElementById('editWeight').value);
+    if (!date || isNaN(height) || isNaN(weight)) { alert('请填写完整信息'); return false; }
+    const list = getGrowthRecords();
+    list.push({ id:'g'+Date.now(), date, height, weight });
+    saveGrowthRecords(list);
+    switchModule('growth');
+    return true;
+  });
+}
+
+function deleteGrowth(id) {
+  if (!confirm('确定删除这条生长发育记录吗？')) return;
+  let list = getGrowthRecords();
+  list = list.filter(x => x.id !== id);
+  saveGrowthRecords(list);
+  switchModule('growth');
+}
+
+// ============ 成长里程碑 ============
+const DEFAULT_MILESTONES = [
+  {id:'m1',date:'2024-08-15',skill:'抬头+逗笑会出声',cat:'大运动发展'},
+  {id:'m2',date:'2024-09-20',skill:'吃手吃脚',cat:'认知发展'},
+  {id:'m3',date:'2024-11-10',skill:'翻身（从仰到趴）',cat:'认知发展'},
+  {id:'m4',date:'2024-12-05',skill:'双手传递玩具',cat:'精细动作'},
+  {id:'m5',date:'2025-01-15',skill:'会抓握摇铃',cat:'互动能力'},
+  {id:'m6',date:'2025-02-20',skill:'会叫出声',cat:'认知发展'},
+  {id:'m7',date:'2025-03-10',skill:'会说baba/mama',cat:'社交能力'},
+  {id:'m8',date:'2025-05-01',skill:'会独坐',cat:'认知发展'},
+  {id:'m9',date:'2025-06-15',skill:'会爬行+扶站几秒',cat:'精细动作'},
+  {id:'m10',date:'2025-08-10',skill:'会扶走',cat:'认知发展'},
+  {id:'m11',date:'2025-10-20',skill:'会独站片刻',cat:'认知发展'},
+  {id:'m12',date:'2025-12-01',skill:'会说单字"猫""狗"',cat:'社交能力'},
+  {id:'m13',date:'2026-02-15',skill:'熟练使用勺子吃饭',cat:'生活技能'},
+  {id:'m14',date:'2026-04-10',skill:'会说3-5个字句子',cat:'语言发展'},
+  {id:'m15',date:'2026-06-01',skill:'会原地跳跃（2-3次）',cat:'社交能力'},
+  {id:'m16',date:'2026-07-15',skill:'会自己脱鞋脱袜',cat:'生活技能'},
+];
+
+const MILESTONE_CATS = ['大运动发展','认知发展','精细动作','互动能力','社交能力','生活技能','语言发展'];
+
+function getMilestones() {
+  const data = loadData();
+  return data.milestones || [...DEFAULT_MILESTONES.map(v => ({...v}))];
+}
+function saveMilestones(list) { saveData('milestones', list); }
+
+function renderMilestone() {
+  const ms = getMilestones();
+  ms.sort((a,b) => a.date.localeCompare(b.date));
+  return `
+    <div class="module-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="icon">🏁</span>
+          <h3>成长里程碑</h3>
+          <span class="badge">点击行可编辑 | 底部可新增</span>
+        </div>
+        <p style="font-size:13px; color:var(--text-light); margin-bottom:14px;">🏁 解锁探险每一站新技能。双击或点 ✏️ 编辑，修改后自动保存。</p>
+        <table class="plan-table">
+          <thead><tr><th>日期</th><th>解锁技能</th><th>分类</th><th>操作</th></tr></thead>
+          <tbody>
+            ${ms.map(m => `
+              <tr class="vax-row" ondblclick="editMilestone('${m.id}')">
+                <td>${m.date}</td>
+                <td>${m.skill}</td>
+                <td><span class="phase-tag p1">${m.cat}</span></td>
+                <td>
+                  <button class="btn-edit" onclick="event.stopPropagation(); editMilestone('${m.id}')" title="编辑">✏️</button>
+                  <button class="btn-del" onclick="event.stopPropagation(); deleteMilestone('${m.id}')" title="删除">🗑️</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <div style="margin-top:12px; text-align:right;">
+          <button class="btn-action" onclick="addMilestone()">➕ 新增里程碑</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function editMilestone(id) {
+  const ms = getMilestones();
+  const m = ms.find(x => x.id === id);
+  if (!m) return;
+  showModal('✏️ 编辑成长里程碑', [
+    {label:'日期', id:'editDate', type:'date', value:m.date},
+    {label:'解锁技能', id:'editSkill', type:'text', value:m.skill, placeholder:'如：会独站'},
+    {label:'分类', id:'editCat', type:'select', value:m.cat, options:MILESTONE_CATS},
+  ], () => {
+    const date = document.getElementById('editDate').value;
+    const skill = document.getElementById('editSkill').value.trim();
+    const cat = document.getElementById('editCat').value;
+    if (!date || !skill) { alert('请填写日期和技能'); return false; }
+    const list = getMilestones();
+    const idx = list.findIndex(x => x.id === id);
+    if (idx === -1) return false;
+    list[idx] = { ...list[idx], date, skill, cat };
+    saveMilestones(list);
+    switchModule('milestone');
+    return true;
+  });
+}
+
+function addMilestone() {
+  showModal('➕ 新增里程碑', [
+    {label:'日期', id:'editDate', type:'date', value:today()},
+    {label:'解锁技能', id:'editSkill', type:'text', value:'', placeholder:'如：会自己穿鞋'},
+    {label:'分类', id:'editCat', type:'select', value:MILESTONE_CATS[0], options:MILESTONE_CATS},
+  ], () => {
+    const date = document.getElementById('editDate').value;
+    const skill = document.getElementById('editSkill').value.trim();
+    const cat = document.getElementById('editCat').value;
+    if (!date || !skill) { alert('请填写日期和技能'); return false; }
+    const list = getMilestones();
+    list.push({ id:'m'+Date.now(), date, skill, cat });
+    saveMilestones(list);
+    switchModule('milestone');
+    return true;
+  });
+}
+
+function deleteMilestone(id) {
+  if (!confirm('确定删除这条里程碑记录吗？')) return;
+  let list = getMilestones();
+  list = list.filter(x => x.id !== id);
+  saveMilestones(list);
+  switchModule('milestone');
+}
+
+// ============ 早教陪玩 ============
+function renderPlay() {
+  return `
+    <div class="module-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="icon">🧩</span>
+          <h3>早教陪玩</h3>
+          <span class="badge">积木工具箱</span>
+        </div>
+        <p style="font-size:13px; color:var(--text-light); margin-bottom:14px;">🚗 交通工具主题游戏亲子陪伴</p>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>打卡日期</label>
+          <input type="date" id="playDate" value="${today()}">
+        </div>
+        <div class="section-title">🎮 陪玩活动</div>
+        <div class="task-grid" id="playTasks">
+          ${['积木搭建','小车轨道游戏','角色扮演','交通工具绘本','拼图配对','音乐律动','户外探索','涂鸦画画'].map((t,i) => `
+            <div class="task-check" data-task="${i}" onclick="toggleTask(this)">
+              <div class="check-box"></div>
+              <span>${t}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>陪玩时长（分钟）</label>
+          <input type="number" id="playDuration" placeholder="分钟" style="max-width:120px;">
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="savePlay()">💾 保存记录</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="icon">📋</span><h3>陪玩记录</h3></div>
+        <div id="playRecords" class="record-list"></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============ 英语启蒙 ============
+function renderEnglish() {
+  const books = getBookList('english');
+  const todayStr = today();
+  // 自动排班：新2旧3
+  const schedule = autoScheduleBooks(books, 2, 3);
+  return `
+    <div class="module-panel">
+      <!-- 计划表 -->
+      <div class="card">
+        <div class="card-header">
+          <span class="icon">✈️</span>
+          <h3>英语启蒙 · 长期学习计划</h3>
+          <span class="badge">民航小飞机</span>
+        </div>
+        <p style="font-size:14px; font-weight:600; color:#2C6A9E;">搭乘英语小航班，每日任务勾选打卡</p>
+        <table class="plan-table">
+          <thead><tr><th>阶段</th><th>周期</th><th>内容规划</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="phase-tag p1">词汇积累</span></td>
+              <td>持续滚动</td>
+              <td>交通工具类、日常动作、五官、食物基础名词；<strong>每周新增5个新词</strong>，循环复习旧词</td>
+            </tr>
+            <tr>
+              <td><span class="phase-tag p2">绘本阅读</span></td>
+              <td>每日执行</td>
+              <td><strong>「新2旧3」</strong>方案：每日2本新书 + 3本复习旧书；书单读完一轮自动循环重复巩固</td>
+            </tr>
+            <tr>
+              <td><span class="phase-tag p3">口语目标</span></td>
+              <td>持续积累</td>
+              <td>积累日常短句，鼓励指认、跟读，不强求自主输出</td>
+            </tr>
+            <tr>
+              <td><span class="phase-tag p1">磨耳朵</span></td>
+              <td>每日</td>
+              <td>英文音频10～15分钟（儿歌、分级音频）</td>
+            </tr>
+            <tr>
+              <td><span class="phase-tag p2">阶段目标</span></td>
+              <td>3个月</td>
+              <td>能听懂简单指令，指认对应英文单词，愿意模仿发音</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 书单管理 -->
+      <div class="card">
+        <div class="card-header"><span class="icon">📚</span><h3>英文书单管理</h3></div>
+        <div class="booklist-panel">
+          <p style="font-size:12px; color:var(--text-light); margin-bottom:8px;">📖 自有书单库（支持随时新增/删除）</p>
+          <div id="englishBooklist">
+            ${books.length === 0 ? '<p style="font-size:12px;color:var(--text-light);">暂无书单，请在下方添加</p>' : books.map((b,i) => `
+              <div class="booklist-item">
+                <span>📕 ${b}</span>
+                <button class="btn btn-outline btn-sm" onclick="removeBook('english',${i})">删除</button>
+              </div>
+            `).join('')}
+          </div>
+          <div class="add-book-row">
+            <input type="text" id="englishBookInput" placeholder="输入英文绘本名称">
+            <button class="btn btn-primary btn-sm" onclick="addBook('english')">+ 添加</button>
+          </div>
+          ${schedule.length > 0 ? `
+            <div style="margin-top:10px;font-size:12px;">
+              <strong>📋 今日推荐阅读（新2旧3自动排班）：</strong><br>
+              ${schedule.map((b,i) => `<span style="margin-right:8px;">${i < 2 ? '🆕' : '🔄'} ${b}</span>`).join('<br>')}
+            </div>
+          ` : ''}
+        </div>
+      </div>
+
+      <!-- 每日打卡表单 -->
+      <div class="card">
+        <div class="card-header"><span class="icon">✅</span><h3>每日打卡</h3></div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>打卡日期</label>
+          <input type="date" id="englishDate" value="${todayStr}">
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>阅读书目记录</label>
+          <input type="text" id="englishBooksRead" placeholder="今日新书/复习绘本名称">
+        </div>
+        <div class="section-title">📋 每日学习任务</div>
+        <div class="task-grid" id="englishTasks">
+          ${['本周词汇跟读复习','分级绘本阅读（新2旧3）','亲子口语短句互动','英文儿歌/音频磨耳朵'].map((t,i) => `
+            <div class="task-check" data-task="${i}" onclick="toggleTask(this)">
+              <div class="check-box"></div>
+              <span>${t}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>完成状态</label>
+          <div class="radio-group" id="englishStatus">
+            ${['全部完成','部分完成','未进行'].map((s,i) => `
+              <div class="radio-option" data-val="${i}" onclick="selectRadio(this)">${s}</div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>简单备注</label>
+          <input type="text" id="englishNote" placeholder="当日表现、掌握情况">
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="saveEnglish()">💾 保存打卡</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="icon">📋</span><h3>打卡记录</h3></div>
+        <div id="englishRecords" class="record-list"></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============ 中文绘本阅读 ============
+function renderReading() {
+  const books = getBookList('chinese');
+  const schedule = autoScheduleBooks(books, 0, 0, true); // 中文：每周3新+旧书循环
+  return `
+    <div class="module-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="icon">🚋</span>
+          <h3>中文绘本阅读 · 长期计划</h3>
+          <span class="badge">复古有轨电车</span>
+        </div>
+        <p style="font-size:14px; font-weight:600; color:#2C6A9E;">电车驶入小故事，每日阅读勾选打卡</p>
+        <table class="plan-table">
+          <thead><tr><th>维度</th><th>规划内容</th></tr></thead>
+          <tbody>
+            <tr><td><span class="phase-tag p1">阅读规则</span></td><td>每日1～2本；每周上新3本新书，搭配旧绘本重复温习。书单全部读完后循环二刷。优先挑选<strong>交通工具主题</strong>、认知类、情景故事绘本。</td></tr>
+            <tr><td><span class="phase-tag p2">能力目标</span></td><td>看图指认物品、听懂简单故事、积累名词/动词，尝试简单复述短句</td></tr>
+            <tr><td><span class="phase-tag p3">互动方式</span></td><td>阅读中持续提问、看图联想、情景模仿</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="icon">📚</span><h3>中文书单管理</h3></div>
+        <div class="booklist-panel">
+          <p style="font-size:12px; color:var(--text-light); margin-bottom:8px;">📖 自有中文绘本书单库</p>
+          <div id="chineseBooklist">
+            ${books.length === 0 ? '<p style="font-size:12px;color:var(--text-light);">暂无书单，请在下方添加</p>' : books.map((b,i) => `
+              <div class="booklist-item">
+                <span>📗 ${b}</span>
+                <button class="btn btn-outline btn-sm" onclick="removeBook('chinese',${i})">删除</button>
+              </div>
+            `).join('')}
+          </div>
+          <div class="add-book-row">
+            <input type="text" id="chineseBookInput" placeholder="输入中文绘本名称">
+            <button class="btn btn-primary btn-sm" onclick="addBook('chinese')">+ 添加</button>
+          </div>
+          ${books.length > 0 ? `
+            <div style="margin-top:10px;font-size:12px;">
+              <strong>📋 本周阅读排班建议：</strong>每周3本新书 + 旧书温习循环
+            </div>
+          ` : ''}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="icon">✅</span><h3>每日打卡</h3></div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>打卡日期</label>
+          <input type="date" id="readingDate" value="${today()}">
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>阅读书目记录</label>
+          <input type="text" id="readingBooksRead" placeholder="今日共读绘本名称">
+        </div>
+        <div class="section-title">📋 每日任务</div>
+        <div class="task-grid" id="readingTasks">
+          ${['亲子共读绘本','绘本内容问答互动','新词指认与复述练习','根据画面进行情景联想'].map((t,i) => `
+            <div class="task-check" data-task="${i}" onclick="toggleTask(this)">
+              <div class="check-box"></div>
+              <span>${t}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>完成状态</label>
+          <div class="radio-group" id="readingStatus">
+            ${['全部完成','部分完成','未进行'].map((s,i) => `
+              <div class="radio-option" data-val="${i}" onclick="selectRadio(this)">${s}</div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>简单备注</label>
+          <input type="text" id="readingNote" placeholder="当日表现">
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="saveReading()">💾 保存打卡</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="icon">📋</span><h3>打卡记录</h3></div>
+        <div id="readingRecords" class="record-list"></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============ 数感启蒙 ============
+function renderMath() {
+  return `
+    <div class="module-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="icon">🚂</span>
+          <h3>数感启蒙 · 长期计划</h3>
+          <span class="badge">轨道小火车</span>
+        </div>
+        <p style="font-size:14px; font-weight:600; color:#2C6A9E;">小火车运载数字，数理游戏勾选打卡</p>
+        <table class="plan-table">
+          <thead><tr><th>阶段</th><th>周期</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td><span class="phase-tag p1">第1阶段</span></td><td>第1个月</td><td>认识数字1-10、实物点数</td></tr>
+            <tr><td><span class="phase-tag p2">第2阶段</span></td><td>第2个月</td><td>数量对比多少、大小长短</td></tr>
+            <tr><td><span class="phase-tag p3">第3阶段</span></td><td>第3个月</td><td>基础图形认知、物品分类、简单排序</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:12px; color:var(--text-light);">🧸 教具优先使用小车、工程车、轨道玩具开展游戏</p>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="icon">✅</span><h3>每日打卡</h3></div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>打卡日期</label>
+          <input type="date" id="mathDate" value="${today()}">
+        </div>
+        <div class="section-title">📋 每日任务</div>
+        <div class="task-grid" id="mathTasks">
+          ${['实物点数练习','数量/大小对比游戏','基础形状认知','交通工具分类排序游戏'].map((t,i) => `
+            <div class="task-check" data-task="${i}" onclick="toggleTask(this)">
+              <div class="check-box"></div>
+              <span>${t}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>掌握星级</label>
+          <div class="star-rating" id="mathStars">
+            ${[1,2,3,4,5].map(i => `<span class="star" data-star="${i}" onclick="setStars('mathStars',${i})">★</span>`).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>完成状态</label>
+          <div class="radio-group" id="mathStatus">
+            ${['全部完成','部分完成','未进行'].map((s,i) => `
+              <div class="radio-option" data-val="${i}" onclick="selectRadio(this)">${s}</div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>简单备注</label>
+          <input type="text" id="mathNote" placeholder="薄弱点、游戏玩法">
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="saveMath()">💾 保存打卡</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="icon">📋</span><h3>打卡记录</h3></div>
+        <div id="mathRecords" class="record-list"></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============ 通识学习 ============
+function renderGeneral() {
+  return `
+    <div class="module-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="icon">🚢</span>
+          <h3>通识学习 · 长期计划</h3>
+          <span class="badge">远洋轮船</span>
+        </div>
+        <p style="font-size:14px; font-weight:600; color:#2C6A9E;">轮船远航看世界，每日常识勾选打卡</p>
+        <table class="plan-table">
+          <thead><tr><th>时段</th><th>主题</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td>周一~周二</td><td>🌿 自然常识</td><td>天气、动植物认知</td></tr>
+            <tr><td>周三~周四</td><td>🏥 社会认知</td><td>公共场所功能认知</td></tr>
+            <tr><td>周五</td><td>🚦 交通规则</td><td>出行安全规则学习</td></tr>
+            <tr><td>周末</td><td>👨‍🚒 职业认知</td><td>各行各业职业简单了解</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:12px; color:var(--text-light);">🌍 结合户外观察、车辆场景、绘本实景讲解</p>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="icon">✅</span><h3>每日打卡</h3></div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>打卡日期</label>
+          <input type="date" id="generalDate" value="${today()}">
+        </div>
+        <div class="section-title">📋 每日任务</div>
+        <div class="task-grid" id="generalTasks">
+          ${['自然/动植物小常识学习','公共场所功能认知','出行安全规则学习','职业认知简单了解'].map((t,i) => `
+            <div class="task-check" data-task="${i}" onclick="toggleTask(this)">
+              <div class="check-box"></div>
+              <span>${t}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>理解吸收程度</label>
+          <div class="radio-group" id="generalLevel">
+            ${['听懂领会','一知半解'].map((s,i) => `
+              <div class="radio-option" data-val="${i}" onclick="selectRadio(this)">${s}</div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>完成状态</label>
+          <div class="radio-group" id="generalStatus">
+            ${['全部完成','部分完成','未进行'].map((s,i) => `
+              <div class="radio-option" data-val="${i}" onclick="selectRadio(this)">${s}</div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>简单备注</label>
+          <input type="text" id="generalNote" placeholder="当日表现">
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="saveGeneral()">💾 保存打卡</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="icon">📋</span><h3>打卡记录</h3></div>
+        <div id="generalRecords" class="record-list"></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============ 大运动体能启蒙 ============
+function renderSports() {
+  return `
+    <div class="module-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="icon">🚙</span>
+          <h3>大运动体能启蒙 · 长期计划</h3>
+          <span class="badge">越野小汽车</span>
+        </div>
+        <p style="font-size:14px; font-weight:600; color:#2C6A9E;">小车全力向前冲，体能打卡勾选完成</p>
+        <table class="plan-table">
+          <thead><tr><th>阶段</th><th>周期</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td><span class="phase-tag p1">基础期</span></td><td>第1个月</td><td>练习行走、慢跑、上下台阶、平衡练习</td></tr>
+            <tr><td><span class="phase-tag p2">进阶期</span></td><td>第2-3个月</td><td>持续跳跃、抛接球、攀爬、推拉物品</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:12px; color:var(--text-light);">☀️ 日常保证每日户外放电，优先上午开展大运动</p>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="icon">✅</span><h3>每日打卡</h3></div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>打卡日期</label>
+          <input type="date" id="sportsDate" value="${today()}">
+        </div>
+        <div class="section-title">📋 每日任务</div>
+        <div class="task-grid" id="sportsTasks">
+          ${['跑跳练习','上下台阶','攀爬活动','抛接球','平衡行走','推车小游戏','户外散步'].map((t,i) => `
+            <div class="task-check" data-task="${i}" onclick="toggleTask(this)">
+              <div class="check-box"></div>
+              <span>${t}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>户外活动时长（分钟）</label>
+          <input type="number" id="sportsDuration" placeholder="分钟" style="max-width:120px;">
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>完成状态</label>
+          <div class="radio-group" id="sportsStatus">
+            ${['全部完成','部分完成','未参与'].map((s,i) => `
+              <div class="radio-option" data-val="${i}" onclick="selectRadio(this)">${s}</div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>备注</label>
+          <input type="text" id="sportsNote" placeholder="当日表现">
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="saveSports()">💾 保存打卡</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="icon">📋</span><h3>打卡记录</h3></div>
+        <div id="sportsRecords" class="record-list"></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============ 精细动作启蒙 ============
+function renderFineMotor() {
+  return `
+    <div class="module-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="icon">🚜</span>
+          <h3>精细动作启蒙 · 长期计划</h3>
+          <span class="badge">工程挖掘机</span>
+        </div>
+        <p style="font-size:14px; font-weight:600; color:#2C6A9E;">挖掘机小手练一练，动作打卡勾选完成</p>
+        <table class="plan-table">
+          <thead><tr><th>阶段</th><th>周期</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td><span class="phase-tag p1">基础</span></td><td>第1个月</td><td>翻书、撕纸、抓握积木</td></tr>
+            <tr><td><span class="phase-tag p2">中期</span></td><td>第2个月</td><td>串珠、拧瓶盖、简单堆叠搭建</td></tr>
+            <tr><td><span class="phase-tag p3">后期</span></td><td>第3个月</td><td>贴纸操作、简易涂鸦、夹取物品</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:12px; color:var(--text-light);">🧩 借助小车积木、交通工具贴纸开展练习</p>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="icon">✅</span><h3>每日打卡</h3></div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>打卡日期</label>
+          <input type="date" id="fineMotorDate" value="${today()}">
+        </div>
+        <div class="section-title">📋 每日任务</div>
+        <div class="task-grid" id="fineMotorTasks">
+          ${['串珠子','撕贴画','积木搭建','翻书页','拧瓶盖','夹取小物品','握笔涂鸦'].map((t,i) => `
+            <div class="task-check" data-task="${i}" onclick="toggleTask(this)">
+              <div class="check-box"></div>
+              <span>${t}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>专注时长（分钟）</label>
+          <input type="number" id="fineMotorDuration" placeholder="分钟" style="max-width:120px;">
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>熟练度星级</label>
+          <div class="star-rating" id="fineMotorStars">
+            ${[1,2,3,4,5].map(i => `<span class="star" data-star="${i}" onclick="setStars('fineMotorStars',${i})">★</span>`).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>完成状态</label>
+          <div class="radio-group" id="fineMotorStatus">
+            ${['全部完成','部分完成','未进行'].map((s,i) => `
+              <div class="radio-option" data-val="${i}" onclick="selectRadio(this)">${s}</div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>备注</label>
+          <input type="text" id="fineMotorNote" placeholder="当日表现">
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="saveFineMotor()">💾 保存打卡</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="icon">📋</span><h3>打卡记录</h3></div>
+        <div id="fineMotorRecords" class="record-list"></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============ 生活自理启蒙 ============
+function renderSelfCare() {
+  return `
+    <div class="module-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="icon">🚚</span>
+          <h3>生活自理启蒙 · 长期计划</h3>
+          <span class="badge">后勤保障货车</span>
+        </div>
+        <p style="font-size:14px; font-weight:600; color:#2C6A9E;">后勤小货车，自理能力每日勾选打卡</p>
+        <table class="plan-table">
+          <thead><tr><th>阶段</th><th>周期</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td><span class="phase-tag p1">第一阶段</span></td><td>第1个月</td><td>独立喝水、扔垃圾、配合洗手</td></tr>
+            <tr><td><span class="phase-tag p2">第二阶段</span></td><td>第2个月</td><td>自主进食、脱鞋袜、收纳玩具</td></tr>
+            <tr><td><span class="phase-tag p3">第三阶段</span></td><td>第3个月</td><td>主动洗手、简单整理物品、如厕配合</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:12px; color:var(--text-light);">❤️ 多鼓励，减少包办代替</p>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="icon">✅</span><h3>每日打卡</h3></div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>打卡日期</label>
+          <input type="date" id="selfCareDate" value="${today()}">
+        </div>
+        <div class="section-title">📋 每日任务</div>
+        <div class="task-grid" id="selfCareTasks">
+          ${['自主吃饭','饭前洗手','自己喝水','扔垃圾','脱鞋袜','收纳玩具','如厕配合'].map((t,i) => `
+            <div class="task-check" data-task="${i}" onclick="toggleTask(this)">
+              <div class="check-box"></div>
+              <span>${t}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>完成等级</label>
+          <div class="radio-group" id="selfCareLevel">
+            ${['独立完成','少量辅助','全程帮忙'].map((s,i) => `
+              <div class="radio-option" data-val="${i}" onclick="selectRadio(this)">${s}</div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>完成状态</label>
+          <div class="radio-group" id="selfCareStatus">
+            ${['全部完成','部分完成','未进行'].map((s,i) => `
+              <div class="radio-option" data-val="${i}" onclick="selectRadio(this)">${s}</div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>当日进步备注</label>
+          <input type="text" id="selfCareNote" placeholder="今日进步">
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="saveSelfCare()">💾 保存打卡</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="icon">📋</span><h3>打卡记录</h3></div>
+        <div id="selfCareRecords" class="record-list"></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============ 日常记录 ============
+function renderDaily() {
+  return `
+    <div class="module-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="icon">📝</span>
+          <h3>日常记录</h3>
+          <span class="badge">方向盘记事本</span>
+        </div>
+        <p style="font-size:13px; color:var(--text-light); margin-bottom:14px;">📝 记录石榴的日常趣事与成长点滴</p>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>日期</label>
+          <input type="date" id="dailyDate" value="${today()}">
+        </div>
+        <div class="form-group">
+          <label class="form-label"><span class="dot"></span>今日趣事/记录</label>
+          <textarea id="dailyContent" placeholder="记录今天的成长点滴..."></textarea>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="saveDaily()">💾 保存记录</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="icon">📋</span><h3>日常记录列表</h3></div>
+        <div id="dailyRecords" class="record-list"></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============ 旅行打卡 ============
+const DEFAULT_TRAVEL = [
+  {id:'t1',date:'2024-10-01',city:'北京',story:'国庆游天安门，第一次带石榴出远门。'},
+  {id:'t2',date:'2025-02-10',city:'三亚',story:'春节避寒之旅，第一次看海挖沙玩水。'},
+  {id:'t3',date:'2025-05-20',city:'乌镇',story:'江南水乡古镇游，石榴第一次坐船游古镇。'},
+  {id:'t4',date:'2025-08-15',city:'成都',story:'暑假游成都看大熊猫，石榴第一次看大熊猫吃竹子。'},
+];
+
+function getTravels() {
+  const data = loadData();
+  return data.travels || [...DEFAULT_TRAVEL.map(v => ({...v}))];
+}
+function saveTravels(list) { saveData('travels', list); }
+
+function renderTravel() {
+  const trips = getTravels();
+  trips.sort((a,b) => a.date.localeCompare(b.date));
+  return `
+    <div class="module-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="icon">📍</span>
+          <h3>旅行打卡</h3>
+          <span class="badge">点击行可编辑 | 底部可新增</span>
+        </div>
+        <p style="font-size:13px; color:var(--text-light); margin-bottom:14px;">🗺️ 石榴小司机外出探索记录。双击或点 ✏️ 编辑，修改后自动保存。</p>
+        <table class="plan-table">
+          <thead><tr><th>日期</th><th>目的地</th><th>旅行故事</th><th>操作</th></tr></thead>
+          <tbody>
+            ${trips.map(t => `
+              <tr class="vax-row" ondblclick="editTravel('${t.id}')">
+                <td>${t.date}</td>
+                <td>${t.city}</td>
+                <td>${t.story}</td>
+                <td>
+                  <button class="btn-edit" onclick="event.stopPropagation(); editTravel('${t.id}')" title="编辑">✏️</button>
+                  <button class="btn-del" onclick="event.stopPropagation(); deleteTravel('${t.id}')" title="删除">🗑️</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <div style="margin-top:12px; text-align:right;">
+          <button class="btn-action" onclick="addTravelRecord()">➕ 新增旅行记录</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function editTravel(id) {
+  const trips = getTravels();
+  const t = trips.find(x => x.id === id);
+  if (!t) return;
+  showModal('✏️ 编辑旅行记录', [
+    {label:'日期', id:'editDate', type:'date', value:t.date},
+    {label:'目的地', id:'editCity', type:'text', value:t.city, placeholder:'如：北京'},
+    {label:'旅行故事', id:'editStory', type:'text', value:t.story, placeholder:'旅行中的趣事...'},
+  ], () => {
+    const date = document.getElementById('editDate').value;
+    const city = document.getElementById('editCity').value.trim();
+    const story = document.getElementById('editStory').value.trim();
+    if (!date || !city) { alert('请填写日期和目的地'); return false; }
+    const list = getTravels();
+    const idx = list.findIndex(x => x.id === id);
+    if (idx === -1) return false;
+    list[idx] = { ...list[idx], date, city, story };
+    saveTravels(list);
+    switchModule('travel');
+    return true;
+  });
+}
+
+function addTravelRecord() {
+  showModal('➕ 新增旅行记录', [
+    {label:'日期', id:'editDate', type:'date', value:today()},
+    {label:'目的地', id:'editCity', type:'text', value:'', placeholder:'如：杭州'},
+    {label:'旅行故事', id:'editStory', type:'text', value:'', placeholder:'旅行中的趣事...'},
+  ], () => {
+    const date = document.getElementById('editDate').value;
+    const city = document.getElementById('editCity').value.trim();
+    const story = document.getElementById('editStory').value.trim();
+    if (!date || !city) { alert('请填写日期和目的地'); return false; }
+    const list = getTravels();
+    list.push({ id:'t'+Date.now(), date, city, story });
+    saveTravels(list);
+    switchModule('travel');
+    return true;
+  });
+}
+
+function deleteTravel(id) {
+  if (!confirm('确定删除这条旅行记录吗？')) return;
+  let list = getTravels();
+  list = list.filter(x => x.id !== id);
+  saveTravels(list);
+  switchModule('travel');
+}
+
+// ============ 工具函数 ============
+function today() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function toggleTask(el) {
+  el.classList.toggle('checked');
+}
+
+function selectRadio(el) {
+  const group = el.parentElement;
+  group.querySelectorAll('.radio-option').forEach(r => r.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function setStars(containerId, n) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.querySelectorAll('.star').forEach((s, i) => {
+    s.classList.toggle('active', i < n);
+  });
+  container.dataset.value = n;
+}
+
+function getCheckedTasks(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return [];
+  return Array.from(container.querySelectorAll('.task-check.checked')).map(el => el.querySelector('span').textContent);
+}
+
+function getRadioValue(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return '';
+  const sel = container.querySelector('.radio-option.selected');
+  return sel ? sel.textContent.trim() : '';
+}
+
+function getStarsValue(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return 0;
+  return parseInt(container.dataset.value || '0');
+}
+
+// ============ 书单管理 ============
+function addBook(type) {
+  const inputId = type === 'english' ? 'englishBookInput' : 'chineseBookInput';
+  const input = document.getElementById(inputId);
+  if (!input || !input.value.trim()) return;
+  const books = getBookList(type);
+  books.push(input.value.trim());
+  saveBookList(type, books);
+  input.value = '';
+  switchModule(currentModule);
+}
+
+function removeBook(type, index) {
+  const books = getBookList(type);
+  books.splice(index, 1);
+  saveBookList(type, books);
+  switchModule(currentModule);
+}
+
+function autoScheduleBooks(books, newCount, oldCount, isChinese = false) {
+  if (books.length === 0) return [];
+  const data = loadData();
+  const key = isChinese ? 'chinese_read_ptr' : 'english_read_ptr';
+  let ptr = data[key] || 0;
+  const schedule = [];
+  // 从ptr开始取newCount本新书
+  for (let i = 0; i < newCount && i < books.length; i++) {
+    schedule.push(books[(ptr + i) % books.length]);
+  }
+  // 旧书从之前读过的取
+  const oldStart = Math.max(0, ptr - oldCount);
+  for (let i = 0; i < oldCount && (oldStart + i) < ptr; i++) {
+    schedule.push(books[(oldStart + i) % books.length]);
+  }
+  // 更新指针
+  const newPtr = (ptr + newCount) % books.length;
+  if (newPtr === 0 && ptr > 0) {
+    // 一轮读完，重置
+  }
+  saveData(key, newPtr);
+  return schedule;
+}
+
+// ============ 保存函数 ============
+function saveCheckin(moduleId, fields) {
+  const records = getCheckins(moduleId);
+  records.unshift({ ...fields, time: new Date().toISOString() });
+  if (records.length > 50) records.length = 50; // 限制50条
+  saveCheckins(moduleId, records);
+  switchModule(moduleId);
+}
+
+// 喂养
+function saveFeeding() {
+  const record = {
+    date: document.getElementById('feedingDate')?.value || today(),
+    breakfast: document.getElementById('feedingBreakfast')?.value || '',
+    lunch: document.getElementById('feedingLunch')?.value || '',
+    dinner: document.getElementById('feedingDinner')?.value || '',
+    snack: document.getElementById('feedingSnack')?.value || '',
+  };
+  saveCheckin('feeding', record);
+}
+
+// 生长发育
+// 早教陪玩
+function savePlay() {
+  const record = {
+    date: document.getElementById('playDate')?.value || today(),
+    tasks: getCheckedTasks('playTasks'),
+    duration: document.getElementById('playDuration')?.value || '',
+  };
+  saveCheckin('play', record);
+}
+
+// 英语启蒙
+function saveEnglish() {
+  const record = {
+    date: document.getElementById('englishDate')?.value || today(),
+    booksRead: document.getElementById('englishBooksRead')?.value || '',
+    tasks: getCheckedTasks('englishTasks'),
+    status: getRadioValue('englishStatus'),
+    note: document.getElementById('englishNote')?.value || '',
+  };
+  saveCheckin('english', record);
+}
+
+// 中文绘本
+function saveReading() {
+  const record = {
+    date: document.getElementById('readingDate')?.value || today(),
+    booksRead: document.getElementById('readingBooksRead')?.value || '',
+    tasks: getCheckedTasks('readingTasks'),
+    status: getRadioValue('readingStatus'),
+    note: document.getElementById('readingNote')?.value || '',
+  };
+  saveCheckin('reading', record);
+}
+
+// 数感启蒙
+function saveMath() {
+  const record = {
+    date: document.getElementById('mathDate')?.value || today(),
+    tasks: getCheckedTasks('mathTasks'),
+    stars: getStarsValue('mathStars'),
+    status: getRadioValue('mathStatus'),
+    note: document.getElementById('mathNote')?.value || '',
+  };
+  saveCheckin('math', record);
+}
+
+// 通识学习
+function saveGeneral() {
+  const record = {
+    date: document.getElementById('generalDate')?.value || today(),
+    tasks: getCheckedTasks('generalTasks'),
+    level: getRadioValue('generalLevel'),
+    status: getRadioValue('generalStatus'),
+    note: document.getElementById('generalNote')?.value || '',
+  };
+  saveCheckin('general', record);
+}
+
+// 大运动
+function saveSports() {
+  const record = {
+    date: document.getElementById('sportsDate')?.value || today(),
+    tasks: getCheckedTasks('sportsTasks'),
+    duration: document.getElementById('sportsDuration')?.value || '',
+    status: getRadioValue('sportsStatus'),
+    note: document.getElementById('sportsNote')?.value || '',
+  };
+  saveCheckin('sports', record);
+}
+
+// 精细动作
+function saveFineMotor() {
+  const record = {
+    date: document.getElementById('fineMotorDate')?.value || today(),
+    tasks: getCheckedTasks('fineMotorTasks'),
+    duration: document.getElementById('fineMotorDuration')?.value || '',
+    stars: getStarsValue('fineMotorStars'),
+    status: getRadioValue('fineMotorStatus'),
+    note: document.getElementById('fineMotorNote')?.value || '',
+  };
+  saveCheckin('fineMotor', record);
+}
+
+// 生活自理
+function saveSelfCare() {
+  const record = {
+    date: document.getElementById('selfCareDate')?.value || today(),
+    tasks: getCheckedTasks('selfCareTasks'),
+    level: getRadioValue('selfCareLevel'),
+    status: getRadioValue('selfCareStatus'),
+    note: document.getElementById('selfCareNote')?.value || '',
+  };
+  saveCheckin('selfCare', record);
+}
+
+// 日常记录
+function saveDaily() {
+  const record = {
+    date: document.getElementById('dailyDate')?.value || today(),
+    content: document.getElementById('dailyContent')?.value || '',
+  };
+  saveCheckin('daily', record);
+}
+
+// 旅行打卡
+// ============ 渲染记录列表 ============
+function renderRecords(containerId, moduleId, renderFn) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const records = getCheckins(moduleId);
+  if (records.length === 0) {
+    container.innerHTML = '<p style="font-size:12px;color:var(--text-light);">暂无记录</p>';
+    return;
+  }
+  container.innerHTML = records.map(r => renderFn(r)).join('');
+}
+
+function bindModuleEvents() {
+  // 渲染记录列表
+  renderRecords('feedingRecords', 'feeding', r => `
+    <div class="record-item">
+      <span class="record-date">${r.date}</span>
+      <span>早:${r.breakfast||'-'} 午:${r.lunch||'-'} 晚:${r.dinner||'-'}</span>
+    </div>
+  `);
+  renderRecords('playRecords', 'play', r => `
+    <div class="record-item">
+      <span class="record-date">${r.date}</span>
+      <span>${(r.tasks||[]).join('、') || '-'} | ${r.duration||0}分钟</span>
+    </div>
+  `);
+  renderRecords('englishRecords', 'english', r => `
+    <div class="record-item">
+      <span class="record-date">${r.date}</span>
+      <span>${(r.tasks||[]).length}项任务</span>
+      <span class="record-status ${r.status==='全部完成'?'full':r.status==='部分完成'?'partial':'none'}">${r.status||'-'}</span>
+      <span style="color:var(--text-light);">${r.note||''}</span>
+    </div>
+  `);
+  renderRecords('readingRecords', 'reading', r => `
+    <div class="record-item">
+      <span class="record-date">${r.date}</span>
+      <span>${(r.tasks||[]).length}项任务</span>
+      <span class="record-status ${r.status==='全部完成'?'full':r.status==='部分完成'?'partial':'none'}">${r.status||'-'}</span>
+      <span style="color:var(--text-light);">${r.booksRead||''}</span>
+    </div>
+  `);
+  renderRecords('mathRecords', 'math', r => `
+    <div class="record-item">
+      <span class="record-date">${r.date}</span>
+      <span>${(r.tasks||[]).length}项 | ⭐${r.stars||0}星</span>
+      <span class="record-status ${r.status==='全部完成'?'full':r.status==='部分完成'?'partial':'none'}">${r.status||'-'}</span>
+    </div>
+  `);
+  renderRecords('generalRecords', 'general', r => `
+    <div class="record-item">
+      <span class="record-date">${r.date}</span>
+      <span>${(r.tasks||[]).length}项 | ${r.level||'-'}</span>
+      <span class="record-status ${r.status==='全部完成'?'full':r.status==='部分完成'?'partial':'none'}">${r.status||'-'}</span>
+    </div>
+  `);
+  renderRecords('sportsRecords', 'sports', r => `
+    <div class="record-item">
+      <span class="record-date">${r.date}</span>
+      <span>${(r.tasks||[]).length}项 | ${r.duration||0}分钟</span>
+      <span class="record-status ${r.status==='全部完成'?'full':r.status==='部分完成'?'partial':'none'}">${r.status||'-'}</span>
+    </div>
+  `);
+  renderRecords('fineMotorRecords', 'fineMotor', r => `
+    <div class="record-item">
+      <span class="record-date">${r.date}</span>
+      <span>${(r.tasks||[]).length}项 | ${r.duration||0}分钟 | ⭐${r.stars||0}</span>
+      <span class="record-status ${r.status==='全部完成'?'full':r.status==='部分完成'?'partial':'none'}">${r.status||'-'}</span>
+    </div>
+  `);
+  renderRecords('selfCareRecords', 'selfCare', r => `
+    <div class="record-item">
+      <span class="record-date">${r.date}</span>
+      <span>${(r.tasks||[]).length}项 | ${r.level||'-'}</span>
+      <span class="record-status ${r.status==='全部完成'?'full':r.status==='部分完成'?'partial':'none'}">${r.status||'-'}</span>
+    </div>
+  `);
+  renderRecords('dailyRecords', 'daily', r => `
+    <div class="record-item">
+      <span class="record-date">${r.date}</span>
+      <span>${(r.content||'').substring(0,50)}${(r.content||'').length>50?'...':''}</span>
+    </div>
+  `);
+
+  // 首页概览
+  if (currentModule === 'home') {
+    renderHomeSummary();
+  }
+}
+
+function renderHomeSummary() {
+  const summary = document.getElementById('homeSummary');
+  if (!summary) return;
+  const modules = ['english','reading','math','general','sports','fineMotor','selfCare','play'];
+  const todayStr = today();
+  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">';
+  const labels = {english:'英语启蒙',reading:'中文绘本',math:'数感启蒙',general:'通识学习',sports:'大运动',fineMotor:'精细动作',selfCare:'生活自理',play:'早教陪玩'};
+  modules.forEach(m => {
+    const records = getCheckins(m);
+    const todayRecord = records.find(r => r.date === todayStr);
+    const done = todayRecord ? (todayRecord.status === '全部完成' ? '✅' : todayRecord.status === '部分完成' ? '⏳' : '❌') : '⬜';
+    html += `<div style="padding:8px 12px;background:#FAFCFE;border-radius:10px;border:1px solid var(--border);">
+      <strong>${labels[m]}</strong> <span style="float:right;">${done}</span><br>
+      <span style="font-size:11px;color:var(--text-light);">${todayRecord ? (todayRecord.tasks||[]).length+'项任务完成' : '今日未打卡'}</span>
+    </div>`;
+  });
+  html += '</div>';
+  summary.innerHTML = html;
+}
+
+// ============ 初始化 ============
+function init() {
+  renderSidebar();
+  switchModule('home');
+  // 高亮首页菜单
+  document.querySelector('.nav-item[data-id="home"]')?.classList.add('active');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
