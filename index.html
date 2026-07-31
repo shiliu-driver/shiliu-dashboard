@@ -1377,118 +1377,391 @@ function renderPlay() {
 function renderEnglish() {
   const books = getBookList('english');
   const todayStr = today();
-  // 自动排班：新2旧3
   const schedule = autoScheduleBooks(books, 2, 3);
 
-  // ===== 每周词汇库（按主题分类，每周5个新词） =====
-  const weeklyWords = [
-    { week:1, theme:'🚗 交通工具(1)', words:['car 汽车','bus 公交车','train 火车','bike 自行车','plane 飞机'], tip:'出门时指着实物说' },
-    { week:2, theme:'🐱 动物(1)', words:['cat 猫','dog 狗','bird 鸟','fish 鱼','duck 鸭子'], tip:'模仿动物叫声+英文' },
-    { week:3, theme:'🍎 食物(1)', words:['apple 苹果','banana 香蕉','milk 牛奶','egg 鸡蛋','rice 米饭'], tip:'吃饭时自然带入' },
-    { week:4, theme:'👀 身体部位', words:['eye 眼睛','nose 鼻子','mouth 嘴巴','ear 耳朵','hand 手'], tip:'边指边说，玩指认游戏' },
-    { week:5, theme:'🚗 交通工具(2)', words:['truck 卡车','boat 船','helicopter 直升机','taxi 出租车','fire engine 消防车'], tip:'看绘本或路上指认' },
-    { week:6, theme:'👨‍👩‍👧 家庭成员', words:['mama 妈妈','dada 爸爸','baby 宝宝','grandma 奶奶','grandpa 爷爷'], tip:'指着家人说' },
-    { week:7, theme:'🎨 颜色', words:['red 红色','blue 蓝色','yellow 黄色','green 绿色','white 白色'], tip:'拿彩色积木/卡片互动' },
-    { week:8, theme:'🔢 数字', words:['one 一','two 二','three 三','four 四','five 五'], tip:'数台阶/数玩具时用英文' },
-    { week:9, theme:'🐱 动物(2)', words:['pig 猪','cow 牛','sheep 羊','horse 马','rabbit 兔子'], tip:'看农场绘本时指认' },
-    { week:10, theme:'👕 衣物', words:['shirt 衬衫','pants 裤子','shoes 鞋子','hat 帽子','socks 袜子'], tip:'穿衣服时说英文' },
-    { week:11, theme:'🏠 家居物品', words:['table 桌子','chair 椅子','door 门','bed 床','light 灯'], tip:'在家里边走边指认' },
-    { week:12, theme:'🍎 食物(2)', words:['bread 面包','water 水','cookie 饼干','noodle 面条','juice 果汁'], tip:'吃零食/吃饭时带入' },
-    { week:13, theme:'🎯 动作词', words:['run 跑','jump 跳','sit 坐下','stand 站','clap 拍手'], tip:'边说边做动作' },
-    { week:14, theme:'🌤️ 天气自然', words:['sun 太阳','moon 月亮','star 星星','rain 雨','cloud 云'], tip:'看窗外或绘本时引入' },
-    { week:15, theme:'🧸 玩具', words:['ball 球','block 积木','doll 娃娃','puzzle 拼图','drum 鼓'], tip:'玩玩具时自然说' },
-    { week:16, theme:'😊 感受/表情', words:['happy 开心','sad 难过','hungry 饿了','sleepy 困了','brave 勇敢'], tip:'根据宝宝情绪表达' },
-    { week:17, theme:'🚗 交通工具(3)', words:['subway 地铁','scooter 滑板车','ambulance 救护车','rocket 火箭','tractor 拖拉机'], tip:'看交通工具绘本扩展' },
-    { week:18, theme:'🐱 动物(3)', words:['frog 青蛙','monkey 猴子','bear 熊','lion 狮子','elephant 大象'], tip:'去动物园/看动物卡片' },
-    { week:19, theme:'🍎 食物(3)', words:['cheese 奶酪','chicken 鸡肉','tomato 番茄','potato 土豆','orange 橙子'], tip:'逛超市时指认' },
-    { week:20, theme:'🎵 日常指令', words:['come here 过来','sit down 坐下','stand up 站起来','give me 给我','bye bye 拜拜'], tip:'配合动作一起说' },
+  // ========== 每周主题库（词汇+口语+儿歌+绘本推荐，全部联动） ==========
+  const weeklyThemes = [
+    {
+      week:1, theme:'🚗 交通工具(1)',
+      words:['car 汽车','bus 公交车','train 火车','bike 自行车','plane 飞机'],
+      wordTip:'出门时指着实物说',
+      phrases:[
+        {scene:'🚗 出门坐车',en:'Let\'s go by car! Fasten your seatbelt.',zh:'我们坐车去！系好安全带。',tip:'上车时自然说'},
+        {scene:'🚌 等公交',en:'Look! The bus is coming! Let\'s get on.',zh:'看！公交车来了！我们上车吧。',tip:'等公交时指着说'},
+        {scene:'🚂 看火车',en:'Choo choo! The train is so long!',zh:'呜呜！火车好长啊！',tip:'模仿火车声音'},
+      ],
+      sssSongs:[
+        {name:'The Wheels on the Bus',desc:'公交车的轮子转转转',why:'本周主题是交通工具，这首SSS经典儿歌完美匹配'},
+        {name:'Down by the Station',desc:'火车站里的小火车',why:'学习train等交通工具词汇的最佳搭配'},
+        {name:'Driving in My Car',desc:'开我的小汽车',why:'car/bus/train 反复出现，跟本周词汇高度重合'},
+      ],
+      bookTips:'推荐交通工具主题绘本：<em>Maisy\'s Bus</em>、<em>Goodnight, Goodnight Construction Site</em>、<em>Freight Train</em>',
+    },
+    {
+      week:2, theme:'🐱 动物(1)',
+      words:['cat 猫','dog 狗','bird 鸟','fish 鱼','duck 鸭子'],
+      wordTip:'模仿动物叫声+英文',
+      phrases:[
+        {scene:'🐱 看见猫',en:'Look, a cat! The cat says "meow meow"!',zh:'看，小猫！小猫喵喵叫！',tip:'模仿猫咪叫'},
+        {scene:'🐶 遇见狗',en:'What a cute dog! Say hello to the doggy!',zh:'好可爱的狗狗！跟狗狗打招呼！',tip:'鼓励宝宝挥手'},
+        {scene:'🦆 看鸭子',en:'The duck goes "quack quack"! Can you quack?',zh:'鸭子嘎嘎叫！你会嘎嘎叫吗？',tip:'一起学鸭子叫'},
+      ],
+      sssSongs:[
+        {name:'Old MacDonald Had a Farm',desc:'老麦克唐纳有个农场',why:'经典动物儿歌，cat/dog/duck 全部覆盖，还能学动物叫声'},
+        {name:'Five Little Ducks',desc:'五只小鸭子',why:'duck 反复出现，数数+动物一举两得'},
+        {name:'Bingo',desc:'B-I-N-G-O 小狗歌',why:'dog主题，节奏朗朗上口，2岁宝宝最爱跟唱'},
+      ],
+      bookTips:'推荐动物主题绘本：<em>Brown Bear, Brown Bear</em>、<em>Dear Zoo</em>、<em>From Head to Toe</em>',
+    },
+    {
+      week:3, theme:'🍎 食物(1)',
+      words:['apple 苹果','banana 香蕉','milk 牛奶','egg 鸡蛋','rice 米饭'],
+      wordTip:'吃饭时自然带入',
+      phrases:[
+        {scene:'🍎 吃水果',en:'Do you want an apple? Here you go. Yummy!',zh:'想吃苹果吗？给你，真好吃！',tip:'递水果时重复英文'},
+        {scene:'🥛 喝牛奶',en:'Time for milk! Drink your milk. So strong!',zh:'该喝牛奶啦！喝牛奶，长得壮！',tip:'举杯示意'},
+        {scene:'🍳 吃鸡蛋',en:'Look, an egg! Open it. Mmm, so good!',zh:'看，鸡蛋！剥开它，嗯～好好吃！',tip:'早餐时边说边吃'},
+      ],
+      sssSongs:[
+        {name:'Do You Like Broccoli?',desc:'你喜欢西兰花吗？',why:'食物主题经典问答歌，apple/banana 等食物词高频出现'},
+        {name:'Apples and Bananas',desc:'苹果和香蕉',why:'apple/banana 直接命中本周词汇，元音变换趣味十足'},
+        {name:'Are You Hungry?',desc:'你饿了吗？',why:'配合吃饭场景播放，自然输入食物词汇'},
+      ],
+      bookTips:'推荐食物主题绘本：<em>The Very Hungry Caterpillar</em>、<em>Eating the Alphabet</em>、<em>Yummy Yucky</em>',
+    },
+    {
+      week:4, theme:'👀 身体部位',
+      words:['eye 眼睛','nose 鼻子','mouth 嘴巴','ear 耳朵','hand 手'],
+      wordTip:'边指边说，玩指认游戏',
+      phrases:[
+        {scene:'👀 指五官',en:'Where is your nose? There it is! Good job!',zh:'你的鼻子在哪里？在那儿！真棒！',tip:'玩指认游戏'},
+        {scene:'👂 听声音',en:'Listen with your ears. What do you hear?',zh:'用耳朵听，你听到什么了？',tip:'双手放在耳朵旁'},
+        {scene:'🤲 拍手',en:'Clap your hands! Clap, clap, clap!',zh:'拍拍手！啪啪啪！',tip:'一起拍手'},
+      ],
+      sssSongs:[
+        {name:'Head, Shoulders, Knees and Toes',desc:'头肩膀膝盖脚趾',why:'最经典身体部位儿歌，eye/ear/mouth/nose全部覆盖'},
+        {name:'One Little Finger',desc:'一根小手指',why:'用手指指身体部位，跟本周主题完美搭配'},
+        {name:'My Teddy Bear',desc:'我的泰迪熊',why:'边唱边指泰迪熊的身体部位，互动性强'},
+      ],
+      bookTips:'推荐身体部位绘本：<em>From Head to Toe</em>、<em>Where Is Baby\'s Belly Button?</em>、<em>Eyes, Nose, Fingers and Toes</em>',
+    },
+    {
+      week:5, theme:'🚗 交通工具(2)',
+      words:['truck 卡车','boat 船','helicopter 直升机','taxi 出租车','fire engine 消防车'],
+      wordTip:'看绘本或路上指认',
+      phrases:[
+        {scene:'🚛 看卡车',en:'Wow, a big truck! It goes "vroom vroom"!',zh:'哇，大卡车！呜～呜～',tip:'模仿卡车声音'},
+        {scene:'⛵ 看船',en:'Look at the boat on the water! So pretty!',zh:'看水上的船！好漂亮！',tip:'指着水面或图片'},
+        {scene:'🚁 看直升机',en:'Up in the sky! A helicopter! So high!',zh:'天上有直升机！好高啊！',tip:'抬头向上指'},
+      ],
+      sssSongs:[
+        {name:'Row Row Row Your Boat',desc:'划呀划小船',why:'boat主题经典儿歌，可以边唱边做划船动作'},
+        {name:'Here Comes the Fire Truck',desc:'消防车来了',why:'fire engine主题，配合本周词汇，2岁男宝最爱'},
+        {name:'Transportation Song',desc:'交通工具歌',why:'truck/taxi/helicopter 综合覆盖，一网打尽'},
+      ],
+      bookTips:'推荐交通工具绘本：<em>Goodnight, Goodnight Construction Site</em>、<em>Little Blue Truck</em>、<em>Things That Go!</em>',
+    },
+    {
+      week:6, theme:'👨‍👩‍👧 家庭成员',
+      words:['mama 妈妈','dada 爸爸','baby 宝宝','grandma 奶奶','grandpa 爷爷'],
+      wordTip:'指着家人说',
+      phrases:[
+        {scene:'👩 找妈妈',en:'Where is Mama? Mama is here! I love you!',zh:'妈妈在哪儿？妈妈在这儿！我爱你！',tip:'抱抱宝宝'},
+        {scene:'👨 爸爸回家',en:'Dada is home! Go say hi to Dada!',zh:'爸爸回来了！去跟爸爸说嗨！',tip:'爸爸进门时说'},
+        {scene:'👴 爷爷奶奶',en:'Let\'s call Grandma and Grandpa! Hello!',zh:'我们给爷爷奶奶打电话吧！你好！',tip:'视频通话时说'},
+      ],
+      sssSongs:[
+        {name:'Baby Shark',desc:'鲨鱼宝宝',why:'mama/dada/grandma/grandpa 全家福词汇全覆盖，节奏洗脑'},
+        {name:'Finger Family',desc:'手指家庭歌',why:'每个手指代表一个家庭成员，边唱边玩手指游戏'},
+        {name:'Skidamarink',desc:'我爱你歌',why:'表达爱的经典儿歌，配合家庭成员主题温馨互动'},
+      ],
+      bookTips:'推荐家庭主题绘本：<em>Guess How Much I Love You</em>、<em>My Dad / My Mum</em>、<em>Llama Llama Red Pajama</em>',
+    },
+    {
+      week:7, theme:'🎨 颜色',
+      words:['red 红色','blue 蓝色','yellow 黄色','green 绿色','white 白色'],
+      wordTip:'拿彩色积木/卡片互动',
+      phrases:[
+        {scene:'🔴 认红色',en:'What color is this? It\'s red! Red apple!',zh:'这是什么颜色？红色！红苹果！',tip:'拿红色积木'},
+        {scene:'🔵 认蓝色',en:'The sky is blue. Can you find something blue?',zh:'天空是蓝色的。你能找到蓝色的东西吗？',tip:'指着天空或蓝色玩具'},
+        {scene:'🟡 认黄色',en:'Yellow like the sun! Where is the yellow block?',zh:'黄色像太阳！黄色积木在哪儿？',tip:'拿黄色积木'},
+      ],
+      sssSongs:[
+        {name:'I See Something Blue',desc:'我看到蓝色的东西',why:'颜色认知经典歌，red/blue/yellow/green全部覆盖'},
+        {name:'Rainbow Colors Song',desc:'彩虹颜色歌',why:'通过彩虹学颜色，本周5个颜色都在歌里'},
+        {name:'What Color Is It?',desc:'这是什么颜色？',why:'问答形式学颜色，跟亲子口语自然衔接'},
+      ],
+      bookTips:'推荐颜色主题绘本：<em>Brown Bear, Brown Bear</em>、<em>Mix It Up!</em>、<em>Blue Hat, Green Hat</em>',
+    },
+    {
+      week:8, theme:'🔢 数字',
+      words:['one 一','two 二','three 三','four 四','five 五'],
+      wordTip:'数台阶/数玩具时用英文',
+      phrases:[
+        {scene:'🔢 数玩具',en:'Let\'s count! One, two, three! Three cars!',zh:'我们来数一数！一、二、三！三辆小汽车！',tip:'拿玩具边数边玩'},
+        {scene:'🪜 上台阶',en:'One step, two steps, three steps! Up we go!',zh:'一步、两步、三步！上去啦！',tip:'上台阶时数'},
+        {scene:'🍪 分饼干',en:'One cookie for you, one for me. Two cookies!',zh:'一块饼干给你，一块给我。两块饼干！',tip:'分享零食时数'},
+      ],
+      sssSongs:[
+        {name:'Five Little Monkeys',desc:'五只小猴子',why:'one到five完美覆盖，故事性强，宝宝最爱'},
+        {name:'One Potato, Two Potatoes',desc:'一个土豆两个土豆',why:'简单数字歌，one到five反复出现'},
+        {name:'How Many Fingers?',desc:'有多少根手指？',why:'用手指学数字，边唱边动手，互动性极强'},
+      ],
+      bookTips:'推荐数字主题绘本：<em>Chicka Chicka 1,2,3</em>、<em>Ten Little Fingers and Ten Little Toes</em>、<em>Counting Kisses</em>',
+    },
+    {
+      week:9, theme:'🐱 动物(2)',
+      words:['pig 猪','cow 牛','sheep 羊','horse 马','rabbit 兔子'],
+      wordTip:'看农场绘本时指认',
+      phrases:[
+        {scene:'🐷 看猪',en:'The pig says "oink oink"! It\'s pink and round!',zh:'小猪哼哼叫！粉粉的圆圆的！',tip:'模仿猪叫'},
+        {scene:'🐮 看牛',en:'The cow says "moo"! It gives us milk!',zh:'奶牛哞哞叫！它给我们牛奶！',tip:'模仿牛叫'},
+        {scene:'🐰 看兔子',en:'Hop hop! The rabbit is hopping! Can you hop?',zh:'跳跳跳！小兔子在跳！你会跳吗？',tip:'一起跳'},
+      ],
+      sssSongs:[
+        {name:'Old MacDonald Had a Farm',desc:'老麦克唐纳有个农场',why:'pig/cow/sheep/horse 全部是农场动物，完美匹配'},
+        {name:'Baa Baa Black Sheep',desc:'咩咩黑绵羊',why:'sheep主题经典，韵律优美'},
+        {name:'Little Peter Rabbit',desc:'小兔子彼得',why:'rabbit主题儿歌，配合动作一起跳'},
+      ],
+      bookTips:'推荐农场动物绘本：<em>Big Red Barn</em>、<em>Moo, Baa, La La La!</em>、<em>The Very Busy Spider</em>',
+    },
+    {
+      week:10, theme:'👕 衣物',
+      words:['shirt 衬衫','pants 裤子','shoes 鞋子','hat 帽子','socks 袜子'],
+      wordTip:'穿衣服时说英文',
+      phrases:[
+        {scene:'👕 穿衣服',en:'Let\'s put on your shirt. Arms up! Good!',zh:'来穿衣服，手举起来！好棒！',tip:'边穿边说'},
+        {scene:'👟 穿鞋',en:'Time to put on your shoes. Left foot, right foot!',zh:'该穿鞋了，左脚、右脚！',tip:'指着左右脚'},
+        {scene:'🧦 穿袜子',en:'Where are your socks? Here they are! Put them on!',zh:'你的袜子呢？在这儿！穿上吧！',tip:'找袜子游戏'},
+      ],
+      sssSongs:[
+        {name:'Put On Your Shoes',desc:'穿上你的鞋子',why:'shoes/socks/hat等衣物词汇全覆盖，穿衣时播放最佳'},
+        {name:'This Is the Way We Get Dressed',desc:'我们这样穿衣服',why:'穿衣流程歌，配合每天穿衣场景'},
+        {name:'Boots and Pants',desc:'靴子和裤子',why:'衣物主题节奏歌，shoes/pants反复出现'},
+      ],
+      bookTips:'推荐衣物主题绘本：<em>Pete the Cat: I Love My White Shoes</em>、<em>Blue Hat, Green Hat</em>、<em>Froggy Gets Dressed</em>',
+    },
+    {
+      week:11, theme:'🏠 家居物品',
+      words:['table 桌子','chair 椅子','door 门','bed 床','light 灯'],
+      wordTip:'在家里边走边指认',
+      phrases:[
+        {scene:'🚪 开门',en:'Open the door! Push! The door is open!',zh:'开门！推一下！门开了！',tip:'推门时说'},
+        {scene:'💡 开灯',en:'Turn on the light. It\'s bright! Turn it off.',zh:'开灯，好亮！关掉吧。',tip:'开关灯互动'},
+        {scene:'🛏️ 睡觉',en:'Time for bed. Lie down. Close your eyes.',zh:'该睡觉了，躺下来，闭上眼睛。',tip:'轻拍哄睡'},
+      ],
+      sssSongs:[
+        {name:'Clean Up Song',desc:'收拾歌',why:'table/chair等家居场景词汇自然输入'},
+        {name:'Are You Sleeping?',desc:'你在睡觉吗？',why:'bed主题，轻柔哄睡，睡前播放最佳'},
+        {name:'Open Shut Them',desc:'打开合上',why:'open/shut动作跟door/light互动场景完美搭配'},
+      ],
+      bookTips:'推荐家居主题绘本：<em>Goodnight Moon</em>、<em>The Napping House</em>、<em>Knuffle Bunny</em>',
+    },
+    {
+      week:12, theme:'🍎 食物(2)',
+      words:['bread 面包','water 水','cookie 饼干','noodle 面条','juice 果汁'],
+      wordTip:'吃零食/吃饭时带入',
+      phrases:[
+        {scene:'🍞 吃面包',en:'Do you want some bread? Tear a piece. Yummy!',zh:'想吃面包吗？撕一小块，好吃！',tip:'撕面包时互动'},
+        {scene:'💧 喝水',en:'Are you thirsty? Here\'s some water. Drink up!',zh:'渴了吗？给你水，喝吧！',tip:'递水杯'},
+        {scene:'🍜 吃面',en:'Slurp the noodles! Long noodles, so fun!',zh:'吸溜吸溜吃面条！长长的面条，真好玩！',tip:'一起吃面'},
+      ],
+      sssSongs:[
+        {name:'Do You Like Spaghetti Yogurt?',desc:'你喜欢意面酸奶吗？',why:'noodle/bread等食物问答歌，幽默有趣'},
+        {name:'Pat-a-Cake',desc:'拍拍蛋糕',why:'bread主题延伸，边唱边拍手互动'},
+        {name:'Who Took the Cookie?',desc:'谁拿了饼干？',why:'cookie主题游戏歌，跟宝宝玩互动游戏'},
+      ],
+      bookTips:'推荐食物主题绘本：<em>If You Give a Mouse a Cookie</em>、<em>Pancakes, Pancakes!</em>、<em>The Watermelon Seed</em>',
+    },
+    {
+      week:13, theme:'🎯 动作词',
+      words:['run 跑','jump 跳','sit 坐下','stand 站','clap 拍手'],
+      wordTip:'边说边做动作',
+      phrases:[
+        {scene:'🏃 跑起来',en:'Let\'s run! Run to Mama! Faster, faster!',zh:'我们来跑！跑到妈妈这儿！快快快！',tip:'张开双臂迎接'},
+        {scene:'🦘 跳一跳',en:'Jump, jump, jump! How high can you jump?',zh:'跳跳跳！你能跳多高？',tip:'一起跳'},
+        {scene:'👏 拍手',en:'Clap your hands! Yay! You did it!',zh:'拍拍手！耶！你做到了！',tip:'热情鼓掌'},
+      ],
+      sssSongs:[
+        {name:'Walking Walking',desc:'走走走',why:'run/jump/sit/stand 全部动作词覆盖，TPR最佳搭档'},
+        {name:'If You\'re Happy and You Know It',desc:'如果感到幸福你就拍拍手',why:'clap/stomp等动作指令歌，2岁最爱互动'},
+        {name:'We All Fall Down',desc:'我们都倒下',why:'sit/stand动作循环，边唱边玩超开心'},
+      ],
+      bookTips:'推荐动作主题绘本：<em>From Head to Toe</em>、<em>Clap Your Hands</em>、<em>Hop on Pop</em>',
+    },
+    {
+      week:14, theme:'🌤️ 天气自然',
+      words:['sun 太阳','moon 月亮','star 星星','rain 雨','cloud 云'],
+      wordTip:'看窗外或绘本时引入',
+      phrases:[
+        {scene:'☀️ 看太阳',en:'The sun is shining! It\'s a sunny day! So warm!',zh:'太阳出来了！今天是晴天！好暖和！',tip:'指着窗外'},
+        {scene:'🌙 看月亮',en:'Look at the moon! It\'s so round and bright!',zh:'看月亮！又圆又亮！',tip:'晚上看窗外'},
+        {scene:'🌧️ 下雨',en:'It\'s raining! Pitter-patter! Let\'s stay inside.',zh:'下雨了！滴答滴答！我们待在屋里吧。',tip:'听雨声'},
+      ],
+      sssSongs:[
+        {name:'Rain Rain Go Away',desc:'雨啊雨啊快走开',why:'rain主题经典，旋律简单，2岁宝宝轻松跟唱'},
+        {name:'Mr. Sun',desc:'太阳先生',why:'sun主题儿歌，sun/sunny反复出现'},
+        {name:'Twinkle Twinkle Little Star',desc:'一闪一闪小星星',why:'star/moon/sun 天空主题全覆盖，睡前经典'},
+      ],
+      bookTips:'推荐天气主题绘本：<em>Little Cloud</em>、<em>It Looked Like Spilt Milk</em>、<em>The Snowy Day</em>',
+    },
+    {
+      week:15, theme:'🧸 玩具',
+      words:['ball 球','block 积木','doll 娃娃','puzzle 拼图','drum 鼓'],
+      wordTip:'玩玩具时自然说',
+      phrases:[
+        {scene:'⚽ 玩球',en:'Catch the ball! Throw it to me! Good catch!',zh:'接住球！扔给我！接得好！',tip:'玩传球游戏'},
+        {scene:'🧱 搭积木',en:'Let\'s build with blocks. Stack them up! Oh, it fell!',zh:'我们来搭积木吧，堆高高！哦，倒了！',tip:'一起搭积木'},
+        {scene:'🥁 敲鼓',en:'Bang the drum! Boom boom boom! So loud!',zh:'敲鼓！咚咚咚！好大声！',tip:'一起敲节奏'},
+      ],
+      sssSongs:[
+        {name:'Roll the Ball',desc:'滚球球',why:'ball主题互动儿歌，可以边唱边玩传球'},
+        {name:'The Pinocchio',desc:'匹诺曹',why:'doll主题延伸，动作指令丰富，互动性强'},
+        {name:'Make a Circle',desc:'围个圈',why:'ball/block等玩具场景游戏歌'},
+      ],
+      bookTips:'推荐玩具主题绘本：<em>Not a Box</em>、<em>Press Here</em>、<em>Knuffle Bunny</em>',
+    },
+    {
+      week:16, theme:'😊 感受/表情',
+      words:['happy 开心','sad 难过','hungry 饿了','sleepy 困了','brave 勇敢'],
+      wordTip:'根据宝宝情绪表达',
+      phrases:[
+        {scene:'😊 开心',en:'You look so happy! I love your smile!',zh:'你看起来好开心！我喜欢你的笑容！',tip:'笑着抱抱'},
+        {scene:'😢 难过',en:'Are you sad? It\'s okay. Mama is here. Give me a hug.',zh:'你难过了吗？没关系，妈妈在。抱抱。',tip:'抱抱安抚'},
+        {scene:'😴 困了',en:'Are you sleepy? Let\'s go to bed. Sweet dreams!',zh:'你困了吗？我们去睡觉吧。好梦！',tip:'轻轻拍拍'},
+      ],
+      sssSongs:[
+        {name:'If You\'re Happy and You Know It',desc:'如果感到幸福你就拍拍手',why:'happy/angry/scared等情绪表达，2岁经典'},
+        {name:'This Is a Happy Face',desc:'这是一张开心的脸',why:'happy/sad/sleepy等表情全覆盖，可以对着镜子做'},
+        {name:'Five Little Monkeys Jumping on the Bed',desc:'五只小猴子在床上跳',why:'happy/brave/sleepy等情绪在故事中自然呈现'},
+      ],
+      bookTips:'推荐情绪主题绘本：<em>The Feelings Book</em>、<em>Glad Monster, Sad Monster</em>、<em>Today I Feel Silly</em>',
+    },
+    {
+      week:17, theme:'🚗 交通工具(3)',
+      words:['subway 地铁','scooter 滑板车','ambulance 救护车','rocket 火箭','tractor 拖拉机'],
+      wordTip:'看交通工具绘本扩展',
+      phrases:[
+        {scene:'🚇 坐地铁',en:'Let\'s take the subway! Hold my hand. Here it comes!',zh:'我们坐地铁去！拉着我的手。车来了！',tip:'坐地铁时指着说'},
+        {scene:'🛴 滑板车',en:'Push your scooter! One foot, then push! Wheee!',zh:'蹬滑板车！一只脚，蹬！呜～',tip:'玩滑板车时说'},
+        {scene:'🚀 火箭',en:'3, 2, 1... Blast off! The rocket goes to space!',zh:'3、2、1…发射！火箭飞向太空！',tip:'倒计时+举起手'},
+      ],
+      sssSongs:[
+        {name:'Zoom Zoom Zoom, We\'re Going to the Moon',desc:'嗖嗖嗖我们去月球',why:'rocket主题，倒计时发射，男宝最爱'},
+        {name:'Hurry Hurry Drive the Firetruck',desc:'快快开消防车',why:'ambulance/firetruck等特种车辆主题'},
+        {name:'The Subway Song',desc:'地铁歌',why:'subway主题，配合日常出行场景'},
+      ],
+      bookTips:'推荐交通工具绘本：<em>Mighty, Mighty Construction Site</em>、<em>Where Do Diggers Sleep at Night?</em>、<em>Cars and Trucks and Things That Go</em>',
+    },
+    {
+      week:18, theme:'🐱 动物(3)',
+      words:['frog 青蛙','monkey 猴子','bear 熊','lion 狮子','elephant 大象'],
+      wordTip:'去动物园/看动物卡片',
+      phrases:[
+        {scene:'🐸 看青蛙',en:'Look at the frog! Ribbit ribbit! It can jump so far!',zh:'看青蛙！呱呱呱！它跳得好远！',tip:'模仿青蛙跳'},
+        {scene:'🐒 看猴子',en:'The monkey is climbing! Ooh ooh ah ah! So funny!',zh:'猴子在爬树！喔喔啊啊！好好笑！',tip:'模仿猴子动作'},
+        {scene:'🐘 看大象',en:'The elephant is so big! It has a long trunk!',zh:'大象好大！它有长长的鼻子！',tip:'用手臂模仿长鼻子'},
+      ],
+      sssSongs:[
+        {name:'Let\'s Go to the Zoo',desc:'我们去动物园',why:'elephant/monkey/frog等动物园动物全覆盖'},
+        {name:'Walking in the Jungle',desc:'在丛林里走',why:'frog/monkey/lion 丛林动物冒险主题'},
+        {name:'Five Little Speckled Frogs',desc:'五只小斑点青蛙',why:'frog主题经典，数字+动物结合'},
+      ],
+      bookTips:'推荐动物园绘本：<em>Dear Zoo</em>、<em>Good Night, Gorilla</em>、<em>Giraffes Can\'t Dance</em>',
+    },
+    {
+      week:19, theme:'🍎 食物(3)',
+      words:['cheese 奶酪','chicken 鸡肉','tomato 番茄','potato 土豆','orange 橙子'],
+      wordTip:'逛超市时指认',
+      phrases:[
+        {scene:'🧀 吃奶酪',en:'Mmm, cheese! It\'s stretchy! Pull it apart!',zh:'嗯～奶酪！拉丝的！拉开看看！',tip:'拉奶酪丝互动'},
+        {scene:'🍅 看番茄',en:'Look, a red tomato! Round and red! Can you hold it?',zh:'看，红色的番茄！圆圆的红红的！你能拿着吗？',tip:'超市/厨房指认'},
+        {scene:'🍊 剥橙子',en:'Let\'s peel the orange. Smell it! So fresh!',zh:'我们来剥橙子，闻一闻！好清新！',tip:'一起剥橙子'},
+      ],
+      sssSongs:[
+        {name:'One Potato, Two Potatoes',desc:'一个土豆两个土豆',why:'potato主题，配合逛超市/厨房场景'},
+        {name:'Oranges and Lemons',desc:'橙子和柠檬',why:'orange主题经典韵律童谣'},
+        {name:'Apples and Bananas',desc:'苹果和香蕉',why:'水果主题，发音变换趣味性高'},
+      ],
+      bookTips:'推荐食物绘本：<em>Growing Vegetable Soup</em>、<em>Eating the Alphabet</em>、<em>Cloudy with a Chance of Meatballs</em>',
+    },
+    {
+      week:20, theme:'🎵 日常指令',
+      words:['come here 过来','sit down 坐下','stand up 站起来','give me 给我','bye bye 拜拜'],
+      wordTip:'配合动作一起说',
+      phrases:[
+        {scene:'🤲 过来',en:'Come here, baby! Give me a big hug!',zh:'过来宝贝！给我一个大大的拥抱！',tip:'张开双臂'},
+        {scene:'🪑 坐下',en:'Sit down, please. Good sitting! Let\'s read a book.',zh:'请坐下。坐得好！我们看书吧。',tip:'拍拍椅子'},
+        {scene:'👋 拜拜',en:'Wave bye-bye! Bye-bye! See you later!',zh:'挥手拜拜！拜拜！回头见！',tip:'挥手示范'},
+      ],
+      sssSongs:[
+        {name:'Stand Up, Sit Down',desc:'站起来坐下',why:'sit down/stand up 指令TPR最佳儿歌'},
+        {name:'Bye Bye Goodbye',desc:'再见歌',why:'bye bye主题，每天结束时的仪式感'},
+        {name:'Make a Circle',desc:'围个圈',why:'come here/sit down 等指令在游戏中自然练习'},
+      ],
+      bookTips:'推荐日常指令绘本：<em>Time for Bed</em>、<em>No, David!</em>、<em>Llama Llama Time to Share</em>',
+    },
   ];
 
-  // 根据当前日期计算是第几周（从出生日算起，适应2岁阶段）
+  // 根据当前日期计算第几周
   const birthDate = new Date('2024-06-26');
   const nowDate = new Date(todayStr);
-  const currentWeek = Math.floor((nowDate - birthDate) / (7 * 86400000)) % weeklyWords.length;
-  const thisWeek = weeklyWords[currentWeek];
-  // 上周的复习词
-  const prevWeek = weeklyWords[(currentWeek - 1 + weeklyWords.length) % weeklyWords.length];
+  const currentWeek = Math.floor((nowDate - birthDate) / (7 * 86400000)) % weeklyThemes.length;
+  const tw = weeklyThemes[currentWeek];
+  const prevTw = weeklyThemes[(currentWeek - 1 + weeklyThemes.length) % weeklyThemes.length];
 
-  // ===== 每日亲子口语库 =====
-  const dailyPhrases = [
-    { scene:'🌅 早上起床', en:'Good morning, baby! Time to wake up!', zh:'早上好宝贝，该起床啦！', tip:'边说边拉开窗帘' },
-    { scene:'🪥 刷牙洗脸', en:'Let\'s brush your teeth. Open your mouth!', zh:'来刷牙吧，张开嘴巴！', tip:'做刷牙动作示范' },
-    { scene:'👕 穿衣服', en:'Put on your shirt. One arm, then the other!', zh:'穿上衣服，一只手，另一只手！', tip:'边穿边指身体部位' },
-    { scene:'🍳 吃早餐', en:'Yummy eggs! Take a bite. Is it good?', zh:'好吃的鸡蛋！咬一口，好吃吗？', tip:'竖起大拇指鼓励' },
-    { scene:'🚗 出门', en:'Let\'s go out! Put on your shoes. Bye-bye!', zh:'我们出门啦！穿上鞋子，拜拜！', tip:'挥挥手做再见动作' },
-    { scene:'🎮 玩玩具', en:'What\'s this? It\'s a car! Vroom vroom!', zh:'这是什么？是小汽车！呜～呜～', tip:'拿玩具互动' },
-    { scene:'📖 看书', en:'Let\'s read a book. Turn the page. What do you see?', zh:'我们看书吧，翻一页，看到什么了？', tip:'指着图画问' },
-    { scene:'🍎 吃水果', en:'Do you want an apple? Here you go. Say "thank you"!', zh:'想吃苹果吗？给你，说"谢谢"！', tip:'递水果时重复英文' },
-    { scene:'🛁 洗澡', en:'Splash splash! Wash your tummy. So clean!', zh:'哗啦哗啦！洗洗小肚肚，好干净！', tip:'边洗边唱' },
-    { scene:'😴 睡觉', en:'It\'s bedtime. Close your eyes. Good night, sweetie!', zh:'该睡觉啦，闭上眼睛，晚安宝贝！', tip:'轻轻拍拍背' },
-    { scene:'🐶 看动物', en:'Look, a dog! The dog says "woof woof"!', zh:'看，小狗！小狗汪汪叫！', tip:'模仿动物叫声' },
-    { scene:'🤗 表扬', en:'Good job! Give me a high-five! You did it!', zh:'真棒！击个掌！你做到了！', tip:'伸出手击掌' },
-    { scene:'😢 摔倒', en:'Are you okay? It\'s okay. Give me a hug.', zh:'你还好吗？没关系，抱抱。', tip:'蹲下抱抱安抚' },
-    { scene:'🧹 收拾', en:'Let\'s clean up. Put the toys in the box. Good helper!', zh:'我们来收拾吧，把玩具放进箱子里，好帮手！', tip:'一起做动作' },
-  ];
-
-  // 每天显示3组口语
-  const dayIndex = Math.floor(new Date(todayStr).getTime() / 86400000) % dailyPhrases.length;
+  // 每天轮换3句主题口语（从本周4句中取3句，按天滚动）
+  const phraseDayIdx = Math.floor(new Date(todayStr).getTime() / 86400000) % tw.phrases.length;
   const todayPhrases = [];
-  for (let i = 0; i < 3; i++) {
-    todayPhrases.push(dailyPhrases[(dayIndex + i) % dailyPhrases.length]);
+  for (let i = 0; i < Math.min(3, tw.phrases.length); i++) {
+    todayPhrases.push(tw.phrases[(phraseDayIdx + i) % tw.phrases.length]);
   }
+
+  // 通用日常口语（跟主题无关的每日必用场景），作为补充
+  const extraPhrases = [
+    {scene:'🪥 刷牙洗脸',en:'Let\'s brush your teeth. Open your mouth!',zh:'来刷牙吧，张开嘴巴！',tip:'做刷牙动作示范'},
+    {scene:'🛁 洗澡',en:'Splash splash! Wash your tummy. So clean!',zh:'哗啦哗啦！洗洗小肚肚，好干净！',tip:'边洗边唱'},
+    {scene:'🧹 收拾',en:'Let\'s clean up. Put the toys in the box. Good helper!',zh:'我们来收拾吧，玩具放进箱子，好帮手！',tip:'一起做动作'},
+  ];
 
   return `
     <div class="module-panel">
 
-      <!-- ===== 1. 长期学习计划（最上方） ===== -->
+      <!-- ===== 本周主题横幅 ===== -->
+      <div style="background:linear-gradient(135deg,#2C6A9E 0%,#5BA4D6 100%);border-radius:16px;padding:16px 20px;margin-bottom:14px;color:#fff;">
+        <div style="font-size:12px;opacity:0.85;margin-bottom:4px;">📅 本周英语主题 · 第${tw.week}周</div>
+        <div style="font-size:22px;font-weight:700;">${tw.theme}</div>
+        <div style="font-size:13px;opacity:0.9;margin-top:4px;">下面所有模块（词汇/口语/绘本/磨耳朵）均围绕本周主题推荐 ↓</div>
+      </div>
+
+      <!-- ===== 1. 长期学习计划 ===== -->
       <div class="card">
         <div class="card-header">
           <span class="icon">✈️</span>
           <h3>英语启蒙 · 长期学习计划</h3>
           <span class="badge">民航小飞机</span>
         </div>
-        <p style="font-size:14px; font-weight:600; color:#2C6A9E;margin-bottom:10px;">搭乘英语小航班，按计划模块逐步推进</p>
         <table class="plan-table">
           <thead><tr><th>模块</th><th>周期</th><th>内容规划</th></tr></thead>
           <tbody>
-            <tr>
-              <td><span class="phase-tag p1">词汇积累</span></td>
-              <td>每周5词</td>
-              <td>按主题分类，<strong>每周新增5个核心词汇</strong>，日常反复指认+场景输入，滚动复习</td>
-            </tr>
-            <tr>
-              <td><span class="phase-tag p2">绘本阅读</span></td>
-              <td>每日执行</td>
-              <td><strong>「新2旧3」</strong>方案：每日2本新书 + 3本复习旧书；书单读完一轮自动循环</td>
-            </tr>
-            <tr>
-              <td><span class="phase-tag p3">亲子口语</span></td>
-              <td>每日3句</td>
-              <td>在日常互动中自然说英文，不强求宝宝跟读，营造双语氛围</td>
-            </tr>
-            <tr>
-              <td><span class="phase-tag p1">磨耳朵</span></td>
-              <td>每日10-15分钟</td>
-              <td>英文儿歌、分级音频（SSS/Pinkfong/牛津树音频等）</td>
-            </tr>
-            <tr>
-              <td><span class="phase-tag p2">阶段目标</span></td>
-              <td>3个月</td>
-              <td>能听懂简单指令，指认对应英文单词，愿意模仿发音</td>
-            </tr>
+            <tr><td><span class="phase-tag p1">词汇积累</span></td><td>每周5词</td><td>按主题分类，<strong>每周新增5个核心词汇</strong>，日常反复指认+场景输入</td></tr>
+            <tr><td><span class="phase-tag p2">绘本阅读</span></td><td>每日执行</td><td><strong>「新2旧3」</strong>：每日2本新书+3本复习旧书，书单循环</td></tr>
+            <tr><td><span class="phase-tag p3">亲子口语</span></td><td>每日3句</td><td><strong>围绕本周主题</strong>，在真实互动中自然说英文</td></tr>
+            <tr><td><span class="phase-tag p1">磨耳朵</span></td><td>每日10-15分钟</td><td><strong>SSS儿歌精准推荐</strong>，歌曲词汇与本周主题一致</td></tr>
+            <tr><td><span class="phase-tag p2">阶段目标</span></td><td>3个月</td><td>听懂简单指令，指认对应英文单词，愿意模仿发音</td></tr>
           </tbody>
         </table>
       </div>
 
-      <!-- ===== 2. 词汇学习（每周具体内容） ===== -->
+      <!-- ===== 2. 本周词汇 ===== -->
       <div class="card" style="background:linear-gradient(135deg,#FFFDF5 0%,#FFF8E1 100%);border:1px solid #FFE082;">
         <div class="card-header">
           <span class="icon">📝</span>
-          <h3>本周词汇学习 · 第${thisWeek.week}周</h3>
-          <span class="badge">${thisWeek.theme}</span>
+          <h3>本周词汇 · ${tw.theme}</h3>
+          <span class="badge">第${tw.week}周</span>
         </div>
-        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
-          ${thisWeek.words.map(w => {
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+          ${tw.words.map(w => {
             const parts = w.split(' ');
             return `<div style="background:#fff;border-radius:10px;padding:10px 16px;border:1px solid #FFE082;text-align:center;min-width:90px;flex:1;">
               <div style="font-size:18px;font-weight:700;color:#3A4A5C;">${parts[0]}</div>
@@ -1496,29 +1769,28 @@ function renderEnglish() {
             </div>`;
           }).join('')}
         </div>
-        <div style="font-size:12px;color:var(--text-light);margin-bottom:8px;">
-          💡 <strong>学习方法：</strong>${thisWeek.tip}。不要求宝宝立刻会说，<strong>每天在不同场景重复3-5次</strong>即可。
+        <div style="font-size:12px;color:var(--text-light);margin-bottom:6px;">
+          💡 <strong>学习方法：</strong>${tw.wordTip}。每天在不同场景重复3-5次，不求立刻会说。
         </div>
         <details style="font-size:12px;color:var(--text-light);cursor:pointer;">
-          <summary style="font-weight:600;color:#5BA4D6;">🔄 上周复习词汇（第${prevWeek.week}周：${prevWeek.theme}）</summary>
+          <summary style="font-weight:600;color:#5BA4D6;">🔄 上周复习（第${prevTw.week}周：${prevTw.theme}）</summary>
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
-            ${prevWeek.words.map(w => `<span style="background:#E8F4FD;border-radius:6px;padding:4px 10px;font-size:12px;">${w}</span>`).join('')}
+            ${prevTw.words.map(w => `<span style="background:#E8F4FD;border-radius:6px;padding:4px 10px;font-size:12px;">${w}</span>`).join('')}
           </div>
         </details>
-        <div style="font-size:11px;color:var(--text-light);margin-top:10px;text-align:right;">📅 共${weeklyWords.length}周词汇库 · 每周自动轮换</div>
       </div>
 
-      <!-- ===== 3. 亲子口语 ===== -->
+      <!-- ===== 3. 亲子口语（本周主题联动） ===== -->
       <div class="card" style="background:linear-gradient(135deg,#E8F4FD 0%,#F0F8FF 100%);border:1px solid #B8D8F0;">
         <div class="card-header">
           <span class="icon">💬</span>
-          <h3>每日亲子口语</h3>
-          <span class="badge">每天3句，自然输入</span>
+          <h3>亲子口语 · 本周主题「${tw.theme}」</h3>
+          <span class="badge">每天3句</span>
         </div>
-        <p style="font-size:12px; color:var(--text-light); margin-bottom:12px;">🗣️ 在真实场景中自然说英文，2岁宝宝最佳启蒙方式。</p>
-        <div style="display:flex;flex-direction:column;gap:10px;">
+        <p style="font-size:12px;color:var(--text-light);margin-bottom:10px;">🗣️ 以下口语围绕<strong>本周主题</strong>设计，在真实场景中自然使用：</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
           ${todayPhrases.map(p => `
-            <div style="background:#fff;border-radius:12px;padding:12px 16px;border:1px solid #D8ECFA;">
+            <div style="background:#fff;border-radius:12px;padding:12px 16px;border:1px solid #B8D8F0;">
               <div style="font-size:14px;font-weight:700;color:#2C6A9E;margin-bottom:4px;">${p.scene}</div>
               <div style="font-size:16px;font-weight:600;color:#3A4A5C;margin-bottom:4px;">🗣️ ${p.en}</div>
               <div style="font-size:13px;color:var(--text-light);margin-bottom:2px;">${p.zh}</div>
@@ -1526,14 +1798,28 @@ function renderEnglish() {
             </div>
           `).join('')}
         </div>
-        <p style="font-size:11px;color:var(--text-light);margin-top:10px;text-align:right;">📅 每日自动轮换 · 共${dailyPhrases.length}组场景</p>
+        <details style="font-size:12px;color:var(--text-light);cursor:pointer;">
+          <summary style="font-weight:600;color:#5BA4D6;">🔖 本周全部4句主题口语</summary>
+          <div style="display:flex;flex-direction:column;gap:4px;margin-top:8px;">
+            ${tw.phrases.map(p => `<div style="background:#fff;border-radius:8px;padding:6px 12px;border:1px dashed #D8ECFA;font-size:12px;">${p.scene}：${p.en}</div>`).join('')}
+          </div>
+        </details>
+        <details style="font-size:12px;color:var(--text-light);cursor:pointer;margin-top:6px;">
+          <summary style="font-weight:600;color:var(--text-light);">🔄 每日通用口语（刷牙/洗澡/收拾）</summary>
+          <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;">
+            ${extraPhrases.map(p => `<div style="background:#fff;border-radius:8px;padding:6px 12px;border:1px dashed #ddd;font-size:12px;">${p.scene}：${p.en}</div>`).join('')}
+          </div>
+        </details>
       </div>
 
-      <!-- ===== 4. 绘本阅读（书单管理） ===== -->
+      <!-- ===== 4. 绘本阅读 ===== -->
       <div class="card">
-        <div class="card-header"><span class="icon">📚</span><h3>英文绘本阅读 · 书单管理</h3></div>
+        <div class="card-header"><span class="icon">📚</span><h3>绘本阅读 · 书单管理</h3></div>
+        <div style="background:#FFFDF5;border-radius:10px;padding:10px 14px;margin-bottom:12px;border:1px solid #FFE082;font-size:13px;color:var(--text);">
+          📖 <strong>本周主题绘本推荐：</strong>${tw.bookTips}
+        </div>
         <div class="booklist-panel">
-          <p style="font-size:12px; color:var(--text-light); margin-bottom:8px;">📖 <strong>「新2旧3」</strong>方案：每日2本新书 + 3本旧书复习。支持随时新增/删除书单。</p>
+          <p style="font-size:12px;color:var(--text-light);margin-bottom:6px;"><strong>「新2旧3」</strong>方案：每日2本新书+3本复习。支持随时新增/删除。</p>
           <div id="englishBooklist">
             ${books.length === 0 ? '<p style="font-size:12px;color:var(--text-light);">暂无书单，请在下方添加</p>' : books.map((b,i) => `
               <div class="booklist-item">
@@ -1548,40 +1834,43 @@ function renderEnglish() {
           </div>
           ${schedule.length > 0 ? `
             <div style="margin-top:10px;font-size:12px;background:#F8FBFD;padding:10px;border-radius:8px;">
-              <strong>📋 今日推荐阅读（新2旧3自动排班）：</strong><br>
+              <strong>📋 今日推荐阅读（新2旧3排班）：</strong><br>
               ${schedule.map((b,i) => `<span style="margin-right:8px;">${i < 2 ? '🆕' : '🔄'} ${b}</span>`).join('<br>')}
             </div>
           ` : ''}
         </div>
       </div>
 
-      <!-- ===== 5. 磨耳朵 ===== -->
-      <div class="card" style="background:#FDF8FF;border:1px solid #E8D5F5;">
+      <!-- ===== 5. 磨耳朵（本周主题联动SSS推荐） ===== -->
+      <div class="card" style="background:linear-gradient(135deg,#FDF8FF 0%,#F8F0FF 100%);border:1px solid #D8C8F0;">
         <div class="card-header">
           <span class="icon">🎵</span>
-          <h3>磨耳朵 · 音频熏听</h3>
+          <h3>磨耳朵 · SSS儿歌推荐「${tw.theme}」</h3>
           <span class="badge">每日10-15分钟</span>
         </div>
-        <p style="font-size:13px;color:var(--text-light);margin-bottom:10px;">🎧 2岁宝宝磨耳朵推荐资源，每天选1-2项播放：</p>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          ${[
-            {label:'Super Simple Songs',desc:'最适龄启蒙儿歌'},
-            {label:'Pinkfong 碰碰狐',desc:'节奏感强'},
-            {label:'牛津树音频',desc:'配合绘本听'},
-            {label:'RAZ AA音频',desc:'单词句型输入'},
-            {label:'Cocomelon',desc:'日常生活场景'},
-            {label:'鹅妈妈童谣',desc:'经典韵律'},
-          ].map(r => `
-            <div style="background:#fff;border-radius:10px;padding:10px 14px;border:1px solid #E8D5F5;flex:1;min-width:140px;">
-              <div style="font-weight:600;font-size:13px;color:#3A4A5C;">🎶 ${r.label}</div>
-              <div style="font-size:11px;color:var(--text-light);">${r.desc}</div>
+        <p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">🎧 以下 <strong>Super Simple Songs</strong> 儿歌与本周主题<strong>精准匹配</strong>，歌词词汇与本周学习内容一致，磨耳朵效果最佳：</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+          ${tw.sssSongs.map((s,i) => `
+            <div style="background:#fff;border-radius:12px;padding:14px 16px;border:1px solid #D8C8F0;display:flex;align-items:flex-start;gap:12px;">
+              <div style="background:#5BA4D6;color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;">${i+1}</div>
+              <div style="flex:1;">
+                <div style="font-weight:700;font-size:15px;color:#3A4A5C;">🎶 ${s.name}</div>
+                <div style="font-size:12px;color:var(--text-light);margin:2px 0;">${s.desc}</div>
+                <div style="font-size:11px;color:#5BA4D6;">🎯 ${s.why}</div>
+              </div>
             </div>
           `).join('')}
         </div>
-        <p style="font-size:11px;color:var(--text-light);margin-top:10px;">💡 建议在起床后、午睡前、玩玩具时作为背景音播放，不求听懂，培养语感。</p>
+        <details style="font-size:12px;color:var(--text-light);cursor:pointer;">
+          <summary style="font-weight:600;color:#7B68AE;">📻 通用磨耳朵资源（不限主题）</summary>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
+            ${['Pinkfong 碰碰狐','Cocomelon','鹅妈妈童谣','牛津树音频','RAZ AA音频','Pete the Cat 音频'].map(r => `<span style="background:#F0E8FF;border-radius:6px;padding:4px 10px;font-size:12px;">🎧 ${r}</span>`).join('')}
+          </div>
+        </details>
+        <p style="font-size:11px;color:var(--text-light);margin-top:10px;">💡 起床后/午睡前/玩玩具时播放，不求听懂，培养语感和韵律。同一周循环播放3首主题儿歌效果最好。</p>
       </div>
 
-      <!-- ===== 6. 每日打卡表单 ===== -->
+      <!-- ===== 6. 每日打卡 ===== -->
       <div class="card">
         <div class="card-header"><span class="icon">✅</span><h3>每日打卡</h3></div>
         <div class="form-group">
@@ -1594,7 +1883,7 @@ function renderEnglish() {
         </div>
         <div class="section-title">📋 每日学习任务</div>
         <div class="task-grid" id="englishTasks">
-          ${['本周词汇指认复习','分级绘本阅读（新2旧3）','亲子口语短句互动','英文儿歌/音频磨耳朵'].map((t,i) => `
+          ${['本周词汇指认复习','分级绘本阅读（新2旧3）','亲子口语短句互动','SSS主题儿歌磨耳朵'].map((t,i) => `
             <div class="task-check" data-task="${i}" onclick="toggleTask(this)">
               <div class="check-box"></div>
               <span>${t}</span>
