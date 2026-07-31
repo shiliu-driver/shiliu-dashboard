@@ -1380,6 +1380,38 @@ function renderEnglish() {
   // 自动排班：新2旧3
   const schedule = autoScheduleBooks(books, 2, 3);
 
+  // ===== 每周词汇库（按主题分类，每周5个新词） =====
+  const weeklyWords = [
+    { week:1, theme:'🚗 交通工具(1)', words:['car 汽车','bus 公交车','train 火车','bike 自行车','plane 飞机'], tip:'出门时指着实物说' },
+    { week:2, theme:'🐱 动物(1)', words:['cat 猫','dog 狗','bird 鸟','fish 鱼','duck 鸭子'], tip:'模仿动物叫声+英文' },
+    { week:3, theme:'🍎 食物(1)', words:['apple 苹果','banana 香蕉','milk 牛奶','egg 鸡蛋','rice 米饭'], tip:'吃饭时自然带入' },
+    { week:4, theme:'👀 身体部位', words:['eye 眼睛','nose 鼻子','mouth 嘴巴','ear 耳朵','hand 手'], tip:'边指边说，玩指认游戏' },
+    { week:5, theme:'🚗 交通工具(2)', words:['truck 卡车','boat 船','helicopter 直升机','taxi 出租车','fire engine 消防车'], tip:'看绘本或路上指认' },
+    { week:6, theme:'👨‍👩‍👧 家庭成员', words:['mama 妈妈','dada 爸爸','baby 宝宝','grandma 奶奶','grandpa 爷爷'], tip:'指着家人说' },
+    { week:7, theme:'🎨 颜色', words:['red 红色','blue 蓝色','yellow 黄色','green 绿色','white 白色'], tip:'拿彩色积木/卡片互动' },
+    { week:8, theme:'🔢 数字', words:['one 一','two 二','three 三','four 四','five 五'], tip:'数台阶/数玩具时用英文' },
+    { week:9, theme:'🐱 动物(2)', words:['pig 猪','cow 牛','sheep 羊','horse 马','rabbit 兔子'], tip:'看农场绘本时指认' },
+    { week:10, theme:'👕 衣物', words:['shirt 衬衫','pants 裤子','shoes 鞋子','hat 帽子','socks 袜子'], tip:'穿衣服时说英文' },
+    { week:11, theme:'🏠 家居物品', words:['table 桌子','chair 椅子','door 门','bed 床','light 灯'], tip:'在家里边走边指认' },
+    { week:12, theme:'🍎 食物(2)', words:['bread 面包','water 水','cookie 饼干','noodle 面条','juice 果汁'], tip:'吃零食/吃饭时带入' },
+    { week:13, theme:'🎯 动作词', words:['run 跑','jump 跳','sit 坐下','stand 站','clap 拍手'], tip:'边说边做动作' },
+    { week:14, theme:'🌤️ 天气自然', words:['sun 太阳','moon 月亮','star 星星','rain 雨','cloud 云'], tip:'看窗外或绘本时引入' },
+    { week:15, theme:'🧸 玩具', words:['ball 球','block 积木','doll 娃娃','puzzle 拼图','drum 鼓'], tip:'玩玩具时自然说' },
+    { week:16, theme:'😊 感受/表情', words:['happy 开心','sad 难过','hungry 饿了','sleepy 困了','brave 勇敢'], tip:'根据宝宝情绪表达' },
+    { week:17, theme:'🚗 交通工具(3)', words:['subway 地铁','scooter 滑板车','ambulance 救护车','rocket 火箭','tractor 拖拉机'], tip:'看交通工具绘本扩展' },
+    { week:18, theme:'🐱 动物(3)', words:['frog 青蛙','monkey 猴子','bear 熊','lion 狮子','elephant 大象'], tip:'去动物园/看动物卡片' },
+    { week:19, theme:'🍎 食物(3)', words:['cheese 奶酪','chicken 鸡肉','tomato 番茄','potato 土豆','orange 橙子'], tip:'逛超市时指认' },
+    { week:20, theme:'🎵 日常指令', words:['come here 过来','sit down 坐下','stand up 站起来','give me 给我','bye bye 拜拜'], tip:'配合动作一起说' },
+  ];
+
+  // 根据当前日期计算是第几周（从出生日算起，适应2岁阶段）
+  const birthDate = new Date('2024-06-26');
+  const nowDate = new Date(todayStr);
+  const currentWeek = Math.floor((nowDate - birthDate) / (7 * 86400000)) % weeklyWords.length;
+  const thisWeek = weeklyWords[currentWeek];
+  // 上周的复习词
+  const prevWeek = weeklyWords[(currentWeek - 1 + weeklyWords.length) % weeklyWords.length];
+
   // ===== 每日亲子口语库 =====
   const dailyPhrases = [
     { scene:'🌅 早上起床', en:'Good morning, baby! Time to wake up!', zh:'早上好宝贝，该起床啦！', tip:'边说边拉开窗帘' },
@@ -1398,7 +1430,7 @@ function renderEnglish() {
     { scene:'🧹 收拾', en:'Let\'s clean up. Put the toys in the box. Good helper!', zh:'我们来收拾吧，把玩具放进箱子里，好帮手！', tip:'一起做动作' },
   ];
 
-  // 根据日期轮换，每天显示3组
+  // 每天显示3组口语
   const dayIndex = Math.floor(new Date(todayStr).getTime() / 86400000) % dailyPhrases.length;
   const todayPhrases = [];
   for (let i = 0; i < 3; i++) {
@@ -1407,14 +1439,83 @@ function renderEnglish() {
 
   return `
     <div class="module-panel">
-      <!-- 每日亲子口语 -->
+
+      <!-- ===== 1. 长期学习计划（最上方） ===== -->
+      <div class="card">
+        <div class="card-header">
+          <span class="icon">✈️</span>
+          <h3>英语启蒙 · 长期学习计划</h3>
+          <span class="badge">民航小飞机</span>
+        </div>
+        <p style="font-size:14px; font-weight:600; color:#2C6A9E;margin-bottom:10px;">搭乘英语小航班，按计划模块逐步推进</p>
+        <table class="plan-table">
+          <thead><tr><th>模块</th><th>周期</th><th>内容规划</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="phase-tag p1">词汇积累</span></td>
+              <td>每周5词</td>
+              <td>按主题分类，<strong>每周新增5个核心词汇</strong>，日常反复指认+场景输入，滚动复习</td>
+            </tr>
+            <tr>
+              <td><span class="phase-tag p2">绘本阅读</span></td>
+              <td>每日执行</td>
+              <td><strong>「新2旧3」</strong>方案：每日2本新书 + 3本复习旧书；书单读完一轮自动循环</td>
+            </tr>
+            <tr>
+              <td><span class="phase-tag p3">亲子口语</span></td>
+              <td>每日3句</td>
+              <td>在日常互动中自然说英文，不强求宝宝跟读，营造双语氛围</td>
+            </tr>
+            <tr>
+              <td><span class="phase-tag p1">磨耳朵</span></td>
+              <td>每日10-15分钟</td>
+              <td>英文儿歌、分级音频（SSS/Pinkfong/牛津树音频等）</td>
+            </tr>
+            <tr>
+              <td><span class="phase-tag p2">阶段目标</span></td>
+              <td>3个月</td>
+              <td>能听懂简单指令，指认对应英文单词，愿意模仿发音</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ===== 2. 词汇学习（每周具体内容） ===== -->
+      <div class="card" style="background:linear-gradient(135deg,#FFFDF5 0%,#FFF8E1 100%);border:1px solid #FFE082;">
+        <div class="card-header">
+          <span class="icon">📝</span>
+          <h3>本周词汇学习 · 第${thisWeek.week}周</h3>
+          <span class="badge">${thisWeek.theme}</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+          ${thisWeek.words.map(w => {
+            const parts = w.split(' ');
+            return `<div style="background:#fff;border-radius:10px;padding:10px 16px;border:1px solid #FFE082;text-align:center;min-width:90px;flex:1;">
+              <div style="font-size:18px;font-weight:700;color:#3A4A5C;">${parts[0]}</div>
+              <div style="font-size:12px;color:var(--text-light);">${parts.slice(1).join(' ')}</div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div style="font-size:12px;color:var(--text-light);margin-bottom:8px;">
+          💡 <strong>学习方法：</strong>${thisWeek.tip}。不要求宝宝立刻会说，<strong>每天在不同场景重复3-5次</strong>即可。
+        </div>
+        <details style="font-size:12px;color:var(--text-light);cursor:pointer;">
+          <summary style="font-weight:600;color:#5BA4D6;">🔄 上周复习词汇（第${prevWeek.week}周：${prevWeek.theme}）</summary>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
+            ${prevWeek.words.map(w => `<span style="background:#E8F4FD;border-radius:6px;padding:4px 10px;font-size:12px;">${w}</span>`).join('')}
+          </div>
+        </details>
+        <div style="font-size:11px;color:var(--text-light);margin-top:10px;text-align:right;">📅 共${weeklyWords.length}周词汇库 · 每周自动轮换</div>
+      </div>
+
+      <!-- ===== 3. 亲子口语 ===== -->
       <div class="card" style="background:linear-gradient(135deg,#E8F4FD 0%,#F0F8FF 100%);border:1px solid #B8D8F0;">
         <div class="card-header">
           <span class="icon">💬</span>
           <h3>每日亲子口语</h3>
           <span class="badge">每天3句，自然输入</span>
         </div>
-        <p style="font-size:12px; color:var(--text-light); margin-bottom:12px;">🗣️ 2岁宝宝英语启蒙关键是<strong>在真实场景中说</strong>，不用刻意教，日常对话中自然输入最有效。每天选3个场景试试吧！</p>
+        <p style="font-size:12px; color:var(--text-light); margin-bottom:12px;">🗣️ 在真实场景中自然说英文，2岁宝宝最佳启蒙方式。</p>
         <div style="display:flex;flex-direction:column;gap:10px;">
           ${todayPhrases.map(p => `
             <div style="background:#fff;border-radius:12px;padding:12px 16px;border:1px solid #D8ECFA;">
@@ -1428,51 +1529,11 @@ function renderEnglish() {
         <p style="font-size:11px;color:var(--text-light);margin-top:10px;text-align:right;">📅 每日自动轮换 · 共${dailyPhrases.length}组场景</p>
       </div>
 
-      <!-- 计划表 -->
+      <!-- ===== 4. 绘本阅读（书单管理） ===== -->
       <div class="card">
-        <div class="card-header">
-          <span class="icon">✈️</span>
-          <h3>英语启蒙 · 长期学习计划</h3>
-          <span class="badge">民航小飞机</span>
-        </div>
-        <p style="font-size:14px; font-weight:600; color:#2C6A9E;">搭乘英语小航班，每日任务勾选打卡</p>
-        <table class="plan-table">
-          <thead><tr><th>阶段</th><th>周期</th><th>内容规划</th></tr></thead>
-          <tbody>
-            <tr>
-              <td><span class="phase-tag p1">词汇积累</span></td>
-              <td>持续滚动</td>
-              <td>交通工具类、日常动作、五官、食物基础名词；<strong>每周新增5个新词</strong>，循环复习旧词</td>
-            </tr>
-            <tr>
-              <td><span class="phase-tag p2">绘本阅读</span></td>
-              <td>每日执行</td>
-              <td><strong>「新2旧3」</strong>方案：每日2本新书 + 3本复习旧书；书单读完一轮自动循环重复巩固</td>
-            </tr>
-            <tr>
-              <td><span class="phase-tag p3">亲子口语</span></td>
-              <td>每日</td>
-              <td><strong>每天3个生活场景</strong>，在日常互动中自然说英文，不强求宝宝跟读，营造双语氛围</td>
-            </tr>
-            <tr>
-              <td><span class="phase-tag p1">磨耳朵</span></td>
-              <td>每日</td>
-              <td>英文音频10～15分钟（儿歌、分级音频）</td>
-            </tr>
-            <tr>
-              <td><span class="phase-tag p2">阶段目标</span></td>
-              <td>3个月</td>
-              <td>能听懂简单指令，指认对应英文单词，愿意模仿发音</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- 书单管理 -->
-      <div class="card">
-        <div class="card-header"><span class="icon">📚</span><h3>英文书单管理</h3></div>
+        <div class="card-header"><span class="icon">📚</span><h3>英文绘本阅读 · 书单管理</h3></div>
         <div class="booklist-panel">
-          <p style="font-size:12px; color:var(--text-light); margin-bottom:8px;">📖 自有书单库（支持随时新增/删除）</p>
+          <p style="font-size:12px; color:var(--text-light); margin-bottom:8px;">📖 <strong>「新2旧3」</strong>方案：每日2本新书 + 3本旧书复习。支持随时新增/删除书单。</p>
           <div id="englishBooklist">
             ${books.length === 0 ? '<p style="font-size:12px;color:var(--text-light);">暂无书单，请在下方添加</p>' : books.map((b,i) => `
               <div class="booklist-item">
@@ -1486,7 +1547,7 @@ function renderEnglish() {
             <button class="btn btn-primary btn-sm" onclick="addBook('english')">+ 添加</button>
           </div>
           ${schedule.length > 0 ? `
-            <div style="margin-top:10px;font-size:12px;">
+            <div style="margin-top:10px;font-size:12px;background:#F8FBFD;padding:10px;border-radius:8px;">
               <strong>📋 今日推荐阅读（新2旧3自动排班）：</strong><br>
               ${schedule.map((b,i) => `<span style="margin-right:8px;">${i < 2 ? '🆕' : '🔄'} ${b}</span>`).join('<br>')}
             </div>
@@ -1494,7 +1555,33 @@ function renderEnglish() {
         </div>
       </div>
 
-      <!-- 每日打卡表单 -->
+      <!-- ===== 5. 磨耳朵 ===== -->
+      <div class="card" style="background:#FDF8FF;border:1px solid #E8D5F5;">
+        <div class="card-header">
+          <span class="icon">🎵</span>
+          <h3>磨耳朵 · 音频熏听</h3>
+          <span class="badge">每日10-15分钟</span>
+        </div>
+        <p style="font-size:13px;color:var(--text-light);margin-bottom:10px;">🎧 2岁宝宝磨耳朵推荐资源，每天选1-2项播放：</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          ${[
+            {label:'Super Simple Songs',desc:'最适龄启蒙儿歌'},
+            {label:'Pinkfong 碰碰狐',desc:'节奏感强'},
+            {label:'牛津树音频',desc:'配合绘本听'},
+            {label:'RAZ AA音频',desc:'单词句型输入'},
+            {label:'Cocomelon',desc:'日常生活场景'},
+            {label:'鹅妈妈童谣',desc:'经典韵律'},
+          ].map(r => `
+            <div style="background:#fff;border-radius:10px;padding:10px 14px;border:1px solid #E8D5F5;flex:1;min-width:140px;">
+              <div style="font-weight:600;font-size:13px;color:#3A4A5C;">🎶 ${r.label}</div>
+              <div style="font-size:11px;color:var(--text-light);">${r.desc}</div>
+            </div>
+          `).join('')}
+        </div>
+        <p style="font-size:11px;color:var(--text-light);margin-top:10px;">💡 建议在起床后、午睡前、玩玩具时作为背景音播放，不求听懂，培养语感。</p>
+      </div>
+
+      <!-- ===== 6. 每日打卡表单 ===== -->
       <div class="card">
         <div class="card-header"><span class="icon">✅</span><h3>每日打卡</h3></div>
         <div class="form-group">
@@ -1507,7 +1594,7 @@ function renderEnglish() {
         </div>
         <div class="section-title">📋 每日学习任务</div>
         <div class="task-grid" id="englishTasks">
-          ${['本周词汇跟读复习','分级绘本阅读（新2旧3）','亲子口语短句互动','英文儿歌/音频磨耳朵'].map((t,i) => `
+          ${['本周词汇指认复习','分级绘本阅读（新2旧3）','亲子口语短句互动','英文儿歌/音频磨耳朵'].map((t,i) => `
             <div class="task-check" data-task="${i}" onclick="toggleTask(this)">
               <div class="check-box"></div>
               <span>${t}</span>
