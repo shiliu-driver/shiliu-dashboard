@@ -483,6 +483,26 @@ textarea:focus { outline: none; border-color: #5BA4D6; }
 .vax-row { cursor: pointer; transition: background 0.15s; }
 .vax-row:hover { background: #F0F7FC; }
 
+/* === 语音喇叭 === */
+.speak-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #5BA4D6;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  color: #5BA4D6;
+}
+.speak-btn:hover { background: #E8F4FD; transform: scale(1.1); }
+.speak-btn.speaking { background: #5BA4D6; color: #fff; animation: pulse 0.6s infinite; }
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+
 /* === 书单管理 === */
 .booklist-panel {
   background: #F8FBFD;
@@ -1072,6 +1092,26 @@ function deleteVaccine(id) {
 
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ============ 语音播放（Web Speech API） ============
+function speak(text, btn) {
+  if (!window.speechSynthesis) return;
+  // 如果正在播放，停止
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+    // 清除所有 speaking 状态
+    document.querySelectorAll('.speak-btn.speaking').forEach(b => b.classList.remove('speaking'));
+    return;
+  }
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = 0.85; // 稍慢，适合宝宝听
+  u.pitch = 1.1;
+  if (btn) btn.classList.add('speaking');
+  u.onend = () => { if (btn) btn.classList.remove('speaking'); };
+  u.onerror = () => { if (btn) btn.classList.remove('speaking'); };
+  window.speechSynthesis.speak(u);
 }
 
 // 通用弹窗：fields = [{label, id, type, value, placeholder?, step?, options?}], onSave 返回 true 则关闭
@@ -1763,8 +1803,10 @@ function renderEnglish() {
         <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
           ${tw.words.map(w => {
             const parts = w.split(' ');
-            return `<div style="background:#fff;border-radius:10px;padding:10px 16px;border:1px solid #FFE082;text-align:center;min-width:90px;flex:1;">
-              <div style="font-size:18px;font-weight:700;color:#3A4A5C;">${parts[0]}</div>
+            return `<div style="background:#fff;border-radius:10px;padding:10px 16px;border:1px solid #FFE082;text-align:center;min-width:90px;flex:1;position:relative;">
+              <div style="font-size:18px;font-weight:700;color:#3A4A5C;display:flex;align-items:center;justify-content:center;gap:6px;">
+                ${parts[0]}<button class="speak-btn" onclick="event.stopPropagation();speak('${parts[0].replace(/'/g,"\\'")}',this)" title="点击听发音">🔊</button>
+              </div>
               <div style="font-size:12px;color:var(--text-light);">${parts.slice(1).join(' ')}</div>
             </div>`;
           }).join('')}
@@ -1792,7 +1834,9 @@ function renderEnglish() {
           ${todayPhrases.map(p => `
             <div style="background:#fff;border-radius:12px;padding:12px 16px;border:1px solid #B8D8F0;">
               <div style="font-size:14px;font-weight:700;color:#2C6A9E;margin-bottom:4px;">${p.scene}</div>
-              <div style="font-size:16px;font-weight:600;color:#3A4A5C;margin-bottom:4px;">🗣️ ${p.en}</div>
+              <div style="font-size:16px;font-weight:600;color:#3A4A5C;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+                🗣️ ${p.en}<button class="speak-btn" onclick="event.stopPropagation();speak('${p.en.replace(/'/g,"\\'")}',this)" title="点击听发音">🔊</button>
+              </div>
               <div style="font-size:13px;color:var(--text-light);margin-bottom:2px;">${p.zh}</div>
               <div style="font-size:11px;color:#5BA4D6;">💡 ${p.tip}</div>
             </div>
@@ -1801,13 +1845,13 @@ function renderEnglish() {
         <details style="font-size:12px;color:var(--text-light);cursor:pointer;">
           <summary style="font-weight:600;color:#5BA4D6;">🔖 本周全部4句主题口语</summary>
           <div style="display:flex;flex-direction:column;gap:4px;margin-top:8px;">
-            ${tw.phrases.map(p => `<div style="background:#fff;border-radius:8px;padding:6px 12px;border:1px dashed #D8ECFA;font-size:12px;">${p.scene}：${p.en}</div>`).join('')}
+            ${tw.phrases.map(p => `<div style="background:#fff;border-radius:8px;padding:6px 12px;border:1px dashed #D8ECFA;font-size:12px;display:flex;align-items:center;gap:4px;">${p.scene}：${p.en}<button class="speak-btn" style="width:22px;height:22px;font-size:11px;" onclick="event.stopPropagation();speak('${p.en.replace(/'/g,"\\'")}',this)" title="听发音">🔊</button></div>`).join('')}
           </div>
         </details>
         <details style="font-size:12px;color:var(--text-light);cursor:pointer;margin-top:6px;">
           <summary style="font-weight:600;color:var(--text-light);">🔄 每日通用口语（刷牙/洗澡/收拾）</summary>
           <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;">
-            ${extraPhrases.map(p => `<div style="background:#fff;border-radius:8px;padding:6px 12px;border:1px dashed #ddd;font-size:12px;">${p.scene}：${p.en}</div>`).join('')}
+            ${extraPhrases.map(p => `<div style="background:#fff;border-radius:8px;padding:6px 12px;border:1px dashed #ddd;font-size:12px;display:flex;align-items:center;gap:4px;">${p.scene}：${p.en}<button class="speak-btn" style="width:22px;height:22px;font-size:11px;" onclick="event.stopPropagation();speak('${p.en.replace(/'/g,"\\'")}',this)" title="听发音">🔊</button></div>`).join('')}
           </div>
         </details>
       </div>
