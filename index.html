@@ -823,6 +823,58 @@ function initApp() {
   switchModule('home');
   document.querySelector('.nav-item[data-id="home"]')?.classList.add('active');
   bindModuleEvents();
+  checkUrlSafety();
+}
+
+// ============ 数据备份与恢复 ============
+function checkUrlSafety() {
+  const urlEl = document.getElementById('currentUrl');
+  const statusEl = document.getElementById('urlStatus');
+  if (!urlEl) return;
+  urlEl.textContent = location.href;
+  if (location.href.includes('github.io')) {
+    statusEl.textContent = '✅ 永久链接，数据安全不会丢失';
+    statusEl.style.color = '#27AE60';
+  } else {
+    statusEl.textContent = '⚠️ 临时链接！数据可能丢失，请使用永久链接：shiliu-driver.github.io';
+    statusEl.style.color = '#E88';
+  }
+}
+
+function exportData() {
+  const data = localStorage.getItem(STORAGE_KEY);
+  if (!data) { alert('暂无数据可备份'); return; }
+  const blob = new Blob([data], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '石榴修炼秘籍备份_' + today() + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function importData(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      alert('✅ 数据导入成功！正在刷新...');
+      location.reload();
+    } catch(err) {
+      alert('❌ 文件格式错误，请选择正确的备份文件');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function clearAllData() {
+  if (!confirm('⚠️ 确认清空所有打卡数据吗？此操作不可撤销！\n\n建议先导出备份再清空。')) return;
+  if (!confirm('再次确认：真的要删除全部数据吗？')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  alert('已清空，正在刷新...');
+  location.reload();
 }
 
 // ============ 菜单配置 ============
@@ -952,6 +1004,29 @@ function renderHome() {
         </div>
         <div id="homeSummary" style="font-size:13px; color: var(--text-light);">
           加载中...
+        </div>
+      </div>
+
+      <div class="card" style="background:#F0F7FC;border:1px solid #B8D8F0;">
+        <div class="card-header">
+          <span class="icon">🔐</span>
+          <h3>数据安全与备份</h3>
+        </div>
+        <div style="background:#fff;border-radius:10px;padding:12px 16px;margin-bottom:12px;border:1px solid #D8ECFA;font-size:13px;">
+          <strong>📋 当前网址：</strong><br>
+          <span style="font-size:11px;word-break:break-all;color:#2C6A9E;" id="currentUrl">加载中...</span><br>
+          <span style="font-size:11px;color:#27AE60;font-weight:600;" id="urlStatus">✅ 永久链接，数据安全</span>
+        </div>
+        <p style="font-size:12px;color:var(--text-light);margin-bottom:10px;">
+          💡 所有打卡数据保存在浏览器本地。建议每周备份一次，换手机/清缓存前务必导出！
+        </p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" onclick="exportData()">📥 导出备份</button>
+          <label class="btn btn-outline btn-sm" style="cursor:pointer;">
+            📂 导入恢复
+            <input type="file" accept=".json" style="display:none;" onchange="importData(this)">
+          </label>
+          <button class="btn btn-outline btn-sm" style="color:#E88;border-color:#E88;" onclick="clearAllData()">🗑️ 清空数据</button>
         </div>
       </div>
     </div>
