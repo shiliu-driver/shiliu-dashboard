@@ -1606,7 +1606,7 @@ function renderEnglish() {
   const weeklyThemes = [
     {
       week:1, theme:'🚗 交通工具(1)',
-      words:['car 汽车','bus 公交车','train 火车','bike 自行车','plane 飞机'],
+      words:[{en:'car',zh:'汽车',icon:'🚗'},{en:'bus',zh:'公交车',icon:'🚌'},{en:'train',zh:'火车',icon:'🚂'},{en:'bike',zh:'自行车',icon:'🚲'},{en:'plane',zh:'飞机',icon:'✈️'}],
       wordTip:'出门时指着实物说',
       phrases:[
         {scene:'🚗 出门坐车',en:'Let\'s go by car! Fasten your seatbelt.',zh:'我们坐车去！系好安全带。',tip:'上车时自然说'},
@@ -1622,7 +1622,7 @@ function renderEnglish() {
     },
     {
       week:2, theme:'🐱 动物(1)',
-      words:['cat 猫','dog 狗','bird 鸟','fish 鱼','duck 鸭子'],
+      words:[{en:'cat',zh:'猫',icon:'🐱'},{en:'dog',zh:'狗',icon:'🐶'},{en:'bird',zh:'鸟',icon:'🐦'},{en:'fish',zh:'鱼',icon:'🐟'},{en:'duck',zh:'鸭子',icon:'🦆'}],
       wordTip:'模仿动物叫声+英文',
       phrases:[
         {scene:'🐱 看见猫',en:'Look, a cat! The cat says "meow meow"!',zh:'看，小猫！小猫喵喵叫！',tip:'模仿猫咪叫'},
@@ -1638,7 +1638,7 @@ function renderEnglish() {
     },
     {
       week:3, theme:'🍎 食物(1)',
-      words:['apple 苹果','banana 香蕉','milk 牛奶','egg 鸡蛋','rice 米饭'],
+      words:[{en:'apple',zh:'苹果',icon:'🍎'},{en:'banana',zh:'香蕉',icon:'🍌'},{en:'milk',zh:'牛奶',icon:'🥛'},{en:'egg',zh:'鸡蛋',icon:'🥚'},{en:'rice',zh:'米饭',icon:'🍚'}],
       wordTip:'吃饭时自然带入',
       phrases:[
         {scene:'🍎 吃水果',en:'Do you want an apple? Here you go. Yummy!',zh:'想吃苹果吗？给你，真好吃！',tip:'递水果时重复英文'},
@@ -1654,7 +1654,7 @@ function renderEnglish() {
     },
     {
       week:4, theme:'👀 身体部位',
-      words:['eye 眼睛','nose 鼻子','mouth 嘴巴','ear 耳朵','hand 手'],
+      words:[{en:'eye',zh:'眼睛',icon:'👀'},{en:'nose',zh:'鼻子',icon:'👃'},{en:'mouth',zh:'嘴巴',icon:'👄'},{en:'ear',zh:'耳朵',icon:'👂'},{en:'hand',zh:'手',icon:'✋'}],
       wordTip:'边指边说，玩指认游戏',
       phrases:[
         {scene:'👀 指五官',en:'Where is your nose? There it is! Good job!',zh:'你的鼻子在哪里？在那儿！真棒！',tip:'玩指认游戏'},
@@ -1670,7 +1670,7 @@ function renderEnglish() {
     },
     {
       week:5, theme:'🚗 交通工具(2)',
-      words:['truck 卡车','boat 船','helicopter 直升机','taxi 出租车','fire engine 消防车'],
+      words:[{en:'truck',zh:'卡车',icon:'🚛'},{en:'boat',zh:'船',icon:'⛵'},{en:'helicopter',zh:'直升机',icon:'🚁'},{en:'taxi',zh:'出租车',icon:'🚕'},{en:'fire engine',zh:'消防车',icon:'🚒'}],
       wordTip:'看绘本或路上指认',
       phrases:[
         {scene:'🚛 看卡车',en:'Wow, a big truck! It goes "vroom vroom"!',zh:'哇，大卡车！呜～呜～',tip:'模仿卡车声音'},
@@ -1686,7 +1686,7 @@ function renderEnglish() {
     },
     {
       week:6, theme:'👨‍👩‍👧 家庭成员',
-      words:['mama 妈妈','dada 爸爸','baby 宝宝','grandma 奶奶','grandpa 爷爷'],
+      words:[{en:'mama',zh:'妈妈',icon:'👩'},{en:'dada',zh:'爸爸',icon:'👨'},{en:'baby',zh:'宝宝',icon:'👶'},{en:'grandma',zh:'奶奶',icon:'👵'},{en:'grandpa',zh:'爷爷',icon:'👴'}],
       wordTip:'指着家人说',
       phrases:[
         {scene:'👩 找妈妈',en:'Where is Mama? Mama is here! I love you!',zh:'妈妈在哪儿？妈妈在这儿！我爱你！',tip:'抱抱宝宝'},
@@ -1702,7 +1702,7 @@ function renderEnglish() {
     },
     {
       week:7, theme:'🎨 颜色',
-      words:['red 红色','blue 蓝色','yellow 黄色','green 绿色','white 白色'],
+      words:[{en:'red',zh:'红色',icon:'🔴'},{en:'blue',zh:'蓝色',icon:'🔵'},{en:'yellow',zh:'黄色',icon:'🟡'},{en:'green',zh:'绿色',icon:'🟢'},{en:'white',zh:'白色',icon:'⚪'}],
       wordTip:'拿彩色积木/卡片互动',
       phrases:[
         {scene:'🔴 认红色',en:'What color is this? It\'s red! Red apple!',zh:'这是什么颜色？红色！红苹果！',tip:'拿红色积木'},
@@ -1718,7 +1718,7 @@ function renderEnglish() {
     },
     {
       week:8, theme:'🔢 数字',
-      words:['one 一','two 二','three 三','four 四','five 五'],
+      words:[{en:'one',zh:'一',icon:'1️⃣'},{en:'two',zh:'二',icon:'2️⃣'},{en:'three',zh:'三',icon:'3️⃣'},{en:'four',zh:'四',icon:'4️⃣'},{en:'five',zh:'五',icon:'5️⃣'}],
       wordTip:'数台阶/数玩具时用英文',
       phrases:[
         {scene:'🔢 数玩具',en:'Let\'s count! One, two, three! Three cars!',zh:'我们来数一数！一、二、三！三辆小汽车！',tip:'拿玩具边数边玩'},
@@ -1734,7 +1734,7 @@ function renderEnglish() {
     },
     {
       week:9, theme:'🐱 动物(2)',
-      words:['pig 猪','cow 牛','sheep 羊','horse 马','rabbit 兔子'],
+      words:[{en:'pig',zh:'猪',icon:'🐷'},{en:'cow',zh:'牛',icon:'🐮'},{en:'sheep',zh:'羊',icon:'🐑'},{en:'horse',zh:'马',icon:'🐴'},{en:'rabbit',zh:'兔子',icon:'🐰'}],
       wordTip:'看农场绘本时指认',
       phrases:[
         {scene:'🐷 看猪',en:'The pig says "oink oink"! It\'s pink and round!',zh:'小猪哼哼叫！粉粉的圆圆的！',tip:'模仿猪叫'},
@@ -1750,7 +1750,7 @@ function renderEnglish() {
     },
     {
       week:10, theme:'👕 衣物',
-      words:['shirt 衬衫','pants 裤子','shoes 鞋子','hat 帽子','socks 袜子'],
+      words:[{en:'shirt',zh:'衬衫',icon:'👕'},{en:'pants',zh:'裤子',icon:'👖'},{en:'shoes',zh:'鞋子',icon:'👟'},{en:'hat',zh:'帽子',icon:'🧢'},{en:'socks',zh:'袜子',icon:'🧦'}],
       wordTip:'穿衣服时说英文',
       phrases:[
         {scene:'👕 穿衣服',en:'Let\'s put on your shirt. Arms up! Good!',zh:'来穿衣服，手举起来！好棒！',tip:'边穿边说'},
@@ -1766,7 +1766,7 @@ function renderEnglish() {
     },
     {
       week:11, theme:'🏠 家居物品',
-      words:['table 桌子','chair 椅子','door 门','bed 床','light 灯'],
+      words:[{en:'table',zh:'桌子',icon:'🪑'},{en:'chair',zh:'椅子',icon:'🪑'},{en:'door',zh:'门',icon:'🚪'},{en:'bed',zh:'床',icon:'🛏️'},{en:'light',zh:'灯',icon:'💡'}],
       wordTip:'在家里边走边指认',
       phrases:[
         {scene:'🚪 开门',en:'Open the door! Push! The door is open!',zh:'开门！推一下！门开了！',tip:'推门时说'},
@@ -1782,7 +1782,7 @@ function renderEnglish() {
     },
     {
       week:12, theme:'🍎 食物(2)',
-      words:['bread 面包','water 水','cookie 饼干','noodle 面条','juice 果汁'],
+      words:[{en:'bread',zh:'面包',icon:'🍞'},{en:'water',zh:'水',icon:'💧'},{en:'cookie',zh:'饼干',icon:'🍪'},{en:'noodle',zh:'面条',icon:'🍜'},{en:'juice',zh:'果汁',icon:'🧃'}],
       wordTip:'吃零食/吃饭时带入',
       phrases:[
         {scene:'🍞 吃面包',en:'Do you want some bread? Tear a piece. Yummy!',zh:'想吃面包吗？撕一小块，好吃！',tip:'撕面包时互动'},
@@ -1798,7 +1798,7 @@ function renderEnglish() {
     },
     {
       week:13, theme:'🎯 动作词',
-      words:['run 跑','jump 跳','sit 坐下','stand 站','clap 拍手'],
+      words:[{en:'run',zh:'跑',icon:'🏃'},{en:'jump',zh:'跳',icon:'🦘'},{en:'sit',zh:'坐下',icon:'🪑'},{en:'stand',zh:'站',icon:'🧍'},{en:'clap',zh:'拍手',icon:'👏'}],
       wordTip:'边说边做动作',
       phrases:[
         {scene:'🏃 跑起来',en:'Let\'s run! Run to Mama! Faster, faster!',zh:'我们来跑！跑到妈妈这儿！快快快！',tip:'张开双臂迎接'},
@@ -1814,7 +1814,7 @@ function renderEnglish() {
     },
     {
       week:14, theme:'🌤️ 天气自然',
-      words:['sun 太阳','moon 月亮','star 星星','rain 雨','cloud 云'],
+      words:[{en:'sun',zh:'太阳',icon:'☀️'},{en:'moon',zh:'月亮',icon:'🌙'},{en:'star',zh:'星星',icon:'⭐'},{en:'rain',zh:'雨',icon:'🌧️'},{en:'cloud',zh:'云',icon:'☁️'}],
       wordTip:'看窗外或绘本时引入',
       phrases:[
         {scene:'☀️ 看太阳',en:'The sun is shining! It\'s a sunny day! So warm!',zh:'太阳出来了！今天是晴天！好暖和！',tip:'指着窗外'},
@@ -1830,7 +1830,7 @@ function renderEnglish() {
     },
     {
       week:15, theme:'🧸 玩具',
-      words:['ball 球','block 积木','doll 娃娃','puzzle 拼图','drum 鼓'],
+      words:[{en:'ball',zh:'球',icon:'⚽'},{en:'block',zh:'积木',icon:'🧱'},{en:'doll',zh:'娃娃',icon:'🪆'},{en:'puzzle',zh:'拼图',icon:'🧩'},{en:'drum',zh:'鼓',icon:'🥁'}],
       wordTip:'玩玩具时自然说',
       phrases:[
         {scene:'⚽ 玩球',en:'Catch the ball! Throw it to me! Good catch!',zh:'接住球！扔给我！接得好！',tip:'玩传球游戏'},
@@ -1846,7 +1846,7 @@ function renderEnglish() {
     },
     {
       week:16, theme:'😊 感受/表情',
-      words:['happy 开心','sad 难过','hungry 饿了','sleepy 困了','brave 勇敢'],
+      words:[{en:'happy',zh:'开心',icon:'😊'},{en:'sad',zh:'难过',icon:'😢'},{en:'hungry',zh:'饿了',icon:'🤤'},{en:'sleepy',zh:'困了',icon:'😴'},{en:'brave',zh:'勇敢',icon:'🦁'}],
       wordTip:'根据宝宝情绪表达',
       phrases:[
         {scene:'😊 开心',en:'You look so happy! I love your smile!',zh:'你看起来好开心！我喜欢你的笑容！',tip:'笑着抱抱'},
@@ -1862,7 +1862,7 @@ function renderEnglish() {
     },
     {
       week:17, theme:'🚗 交通工具(3)',
-      words:['subway 地铁','scooter 滑板车','ambulance 救护车','rocket 火箭','tractor 拖拉机'],
+      words:[{en:'subway',zh:'地铁',icon:'🚇'},{en:'scooter',zh:'滑板车',icon:'🛴'},{en:'ambulance',zh:'救护车',icon:'🚑'},{en:'rocket',zh:'火箭',icon:'🚀'},{en:'tractor',zh:'拖拉机',icon:'🚜'}],
       wordTip:'看交通工具绘本扩展',
       phrases:[
         {scene:'🚇 坐地铁',en:'Let\'s take the subway! Hold my hand. Here it comes!',zh:'我们坐地铁去！拉着我的手。车来了！',tip:'坐地铁时指着说'},
@@ -1878,7 +1878,7 @@ function renderEnglish() {
     },
     {
       week:18, theme:'🐱 动物(3)',
-      words:['frog 青蛙','monkey 猴子','bear 熊','lion 狮子','elephant 大象'],
+      words:[{en:'frog',zh:'青蛙',icon:'🐸'},{en:'monkey',zh:'猴子',icon:'🐒'},{en:'bear',zh:'熊',icon:'🐻'},{en:'lion',zh:'狮子',icon:'🦁'},{en:'elephant',zh:'大象',icon:'🐘'}],
       wordTip:'去动物园/看动物卡片',
       phrases:[
         {scene:'🐸 看青蛙',en:'Look at the frog! Ribbit ribbit! It can jump so far!',zh:'看青蛙！呱呱呱！它跳得好远！',tip:'模仿青蛙跳'},
@@ -1894,7 +1894,7 @@ function renderEnglish() {
     },
     {
       week:19, theme:'🍎 食物(3)',
-      words:['cheese 奶酪','chicken 鸡肉','tomato 番茄','potato 土豆','orange 橙子'],
+      words:[{en:'cheese',zh:'奶酪',icon:'🧀'},{en:'chicken',zh:'鸡肉',icon:'🍗'},{en:'tomato',zh:'番茄',icon:'🍅'},{en:'potato',zh:'土豆',icon:'🥔'},{en:'orange',zh:'橙子',icon:'🍊'}],
       wordTip:'逛超市时指认',
       phrases:[
         {scene:'🧀 吃奶酪',en:'Mmm, cheese! It\'s stretchy! Pull it apart!',zh:'嗯～奶酪！拉丝的！拉开看看！',tip:'拉奶酪丝互动'},
@@ -1910,7 +1910,7 @@ function renderEnglish() {
     },
     {
       week:20, theme:'🎵 日常指令',
-      words:['come here 过来','sit down 坐下','stand up 站起来','give me 给我','bye bye 拜拜'],
+      words:[{en:'come here',zh:'过来',icon:'🫴'},{en:'sit down',zh:'坐下',icon:'🪑'},{en:'stand up',zh:'站起来',icon:'🧍'},{en:'give me',zh:'给我',icon:'🤲'},{en:'bye bye',zh:'拜拜',icon:'👋'}],
       wordTip:'配合动作一起说',
       phrases:[
         {scene:'🤲 过来',en:'Come here, baby! Give me a big hug!',zh:'过来宝贝！给我一个大大的拥抱！',tip:'张开双臂'},
@@ -1985,12 +1985,12 @@ function renderEnglish() {
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
           ${tw.words.map(w => {
-            const parts = w.split(' ');
-            return `<div style="background:#fff;border-radius:10px;padding:10px 16px;border:1px solid #FFE082;text-align:center;min-width:90px;flex:1;position:relative;">
+            return `<div style="background:#fff;border-radius:10px;padding:12px 16px;border:1px solid #FFE082;text-align:center;min-width:90px;flex:1;position:relative;">
+              <div style="font-size:28px;margin-bottom:4px;">${w.icon}</div>
               <div style="font-size:18px;font-weight:700;color:#3A4A5C;display:flex;align-items:center;justify-content:center;gap:6px;">
-                ${parts[0]}<button class="speak-btn" onclick="event.stopPropagation();speak('${parts[0].replace(/'/g,"\\'")}',this)" title="点击听发音">🔊</button>
+                ${w.en}<button class="speak-btn" onclick="event.stopPropagation();speak('${w.en.replace(/'/g,"\\'")}',this)" title="点击听发音">🔊</button>
               </div>
-              <div style="font-size:12px;color:var(--text-light);">${parts.slice(1).join(' ')}</div>
+              <div style="font-size:12px;color:var(--text-light);">${w.zh}</div>
             </div>`;
           }).join('')}
         </div>
@@ -2000,7 +2000,7 @@ function renderEnglish() {
         <details style="font-size:12px;color:var(--text-light);cursor:pointer;">
           <summary style="font-weight:600;color:#5BA4D6;">🔄 上周复习（第${prevTw.week}周：${prevTw.theme}）</summary>
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
-            ${prevTw.words.map(w => `<span style="background:#E8F4FD;border-radius:6px;padding:4px 10px;font-size:12px;">${w}</span>`).join('')}
+            ${prevTw.words.map(w => `<span style="background:#E8F4FD;border-radius:6px;padding:4px 10px;font-size:12px;">${w.icon} ${w.en} ${w.zh}</span>`).join('')}
           </div>
         </details>
       </div>
